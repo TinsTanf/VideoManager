@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Video Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo"><i class="fas fa-video"></i><span>VidManage</span></div>
+           <ul class="sidebar-nav">
+               <li><a href="dashboard.html"><i class="fas fa-tachometer-alt fa-fw"></i> Dashboard</a></li>
+               <li><a href="videos.html"><i class="fas fa-film fa-fw"></i> Videos</a></li>
+               <li><a href="upload.html"><i class="fas fa-upload fa-fw"></i> Upload</a></li>
+               <li><a href="analytics.html"><i class="fas fa-chart-bar fa-fw"></i> Analytics</a></li>
+               <li><a href="comments.html"><i class="fas fa-comments fa-fw"></i> Comments</a></li>
+               <li><a href="users.html"><i class="fas fa-users-cog fa-fw"></i> User Roles</a></li>
+               <li><a href="settings.html" class="active"><i class="fas fa-cog fa-fw"></i> Settings</a></li>
+           </ul>
+       </aside>
+
+        <!-- Main Content -->
+        <div class="main-container">
+            <header class="main-header">
+                <h1 class="header-title">Settings</h1>
+                 <div class="header-actions">
+                     <div class="user-profile"> <img src="https://placehold.co/40x40/8b949e/e6edf3?text=JD" alt="User Avatar"><span>John Doe</span><i class="fas fa-chevron-down fa-xs"></i></div>
+                 </div>
+            </header>
+
+            <main class="page-content">
+                 <!-- Profile Settings Section -->
+                <section class="settings-section widget"> <!-- Kết hợp widget -->
+                    <h2 class="widget-header" style="border:none; padding:0; margin:0 0 20px 0;"><i class="fas fa-user-circle mr-2"></i>Profile Settings</h2>
+                    <div class="widget-content">
+                        <div class="profile-avatar-section">
+                             <img src="https://placehold.co/80x80/8b949e/e6edf3?text=JD" alt="Current Avatar">
+                             <div>
+                                 <label for="avatar-upload" class="button button-secondary">Change Avatar</label>
+                                 <input type="file" id="avatar-upload" accept="image/*" style="display: none;">
+                                 <p class="text-muted" style="font-size: 12px; margin-top: 5px;">JPG, PNG, GIF. Max 2MB.</p>
+                             </div>
+                        </div>
+                         <div class="form-group">
+                             <label for="profile-name">Full Name</label>
+                             <input type="text" id="profile-name" class="form-control" value="John Doe">
+                         </div>
+                         <div class="form-group">
+                             <label for="profile-email">Email Address</label>
+                             <input type="email" id="profile-email" class="form-control" value="john.doe@example.com" disabled>
+                             <p class="text-muted" style="font-size: 12px; margin-top: 5px;">Email cannot be changed.</p>
+                         </div>
+                         <div class="settings-actions">
+                             <button class="button button-primary">Save Profile Changes</button>
+                         </div>
+                    </div>
+                </section>
+
+                <!-- Password Settings Section -->
+                 <section class="settings-section widget">
+                     <h2 class="widget-header" style="border:none; padding:0; margin:0 0 20px 0;"><i class="fas fa-key mr-2"></i>Change Password</h2>
+                     <div class="widget-content">
+                        <div class="form-group">
+                            <label for="current-password">Current Password</label>
+                            <input type="password" id="current-password" class="form-control">
+                        </div>
+                         <div class="form-group">
+                            <label for="new-password">New Password</label>
+                            <input type="password" id="new-password" class="form-control">
+                        </div>
+                         <div class="form-group">
+                            <label for="confirm-password">Confirm New Password</label>
+                            <input type="password" id="confirm-password" class="form-control">
+                        </div>
+                         <div class="settings-actions">
+                             <button class="button button-primary">Update Password</button>
+                         </div>
+                    </div>
+                </section>
+
+
+                <!-- Notification Settings Section -->
+                <section class="settings-section widget">
+                     <h2 class="widget-header" style="border:none; padding:0; margin:0 0 20px 0;"><i class="fas fa-bell mr-2"></i>Notification Settings</h2>
+                     <div class="widget-content">
+                        <div class="notification-item">
+                            <div>
+                                <label for="notify-comments">New Comments</label>
+                                <p class="text-muted">Notify me when someone comments on my videos.</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="notify-comments" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                         <div class="notification-item">
+                            <div>
+                                <label for="notify-mentions">Mentions</label>
+                                <p class="text-muted">Notify me when someone mentions me in a comment.</p>
+                            </div>
+                             <label class="toggle-switch">
+                                <input type="checkbox" id="notify-mentions">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                         <div class="notification-item">
+                            <div>
+                                <label for="notify-uploads">New Uploads (Following)</label>
+                                <p class="text-muted">Notify me about new videos from channels I follow.</p>
+                            </div>
+                             <label class="toggle-switch">
+                                <input type="checkbox" id="notify-uploads" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                         <div class="notification-item">
+                            <div>
+                                <label for="notify-system">System Updates & News</label>
+                                <p class="text-muted">Receive occasional updates about the platform.</p>
+                            </div>
+                             <label class="toggle-switch">
+                                <input type="checkbox" id="notify-system">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                         <div class="settings-actions">
+                             <button class="button button-primary">Save Notification Settings</button>
+                         </div>
+                    </div>
+                </section>
+
+                 <!-- Thêm các section khác nếu cần (API Keys, Billing, etc.) -->
+
+            </main>
+        </div>
+    </div>
+</body>
+</html>

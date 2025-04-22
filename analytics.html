@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Video Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Include Chart.js or other charting library if needed -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+             <div class="sidebar-logo"><i class="fas fa-video"></i><span>VidManage</span></div>
+            <ul class="sidebar-nav">
+                <li><a href="dashboard.html"><i class="fas fa-tachometer-alt fa-fw"></i> Dashboard</a></li>
+                <li><a href="videos.html"><i class="fas fa-film fa-fw"></i> Videos</a></li>
+                <li><a href="upload.html"><i class="fas fa-upload fa-fw"></i> Upload</a></li>
+                <li><a href="analytics.html" class="active"><i class="fas fa-chart-bar fa-fw"></i> Analytics</a></li>
+                <li><a href="comments.html"><i class="fas fa-comments fa-fw"></i> Comments</a></li>
+                <li><a href="users.html"><i class="fas fa-users-cog fa-fw"></i> User Roles</a></li>
+                <li><a href="settings.html"><i class="fas fa-cog fa-fw"></i> Settings</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-container">
+            <header class="main-header">
+                <h1 class="header-title">Analytics</h1>
+                <div class="header-actions">
+                     <div class="user-profile"> <img src="https://placehold.co/40x40/8b949e/e6edf3?text=JD" alt="User Avatar"><span>John Doe</span><i class="fas fa-chevron-down fa-xs"></i></div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="date-range-controls">
+                    <label for="date-range">Date Range:</label>
+                    <!-- Replace with actual date picker component -->
+                    <button class="button button-secondary">Last 7 days</button>
+                    <button class="button button-secondary">Last 30 days</button>
+                    <button class="button button-secondary">Custom Range <i class="fas fa-calendar-alt fa-xs"></i></button>
+                </div>
+
+                <!-- Overview Stats -->
+                <div class="dashboard-grid">
+                     <div class="stat-card">
+                        <div class="stat-card-header"><span class="stat-card-title">Watch time (hours)</span><i class="far fa-clock stat-card-icon"></i></div>
+                        <div class="stat-card-value">4.5K</div>
+                        <div class="stat-card-change positive"><i class="fas fa-arrow-up fa-xs"></i> 15.2%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header"><span class="stat-card-title">Views</span><i class="fas fa-eye stat-card-icon"></i></div>
+                        <div class="stat-card-value">180.7K</div>
+                        <div class="stat-card-change positive"><i class="fas fa-arrow-up fa-xs"></i> 11.8%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header"><span class="stat-card-title">Avg. View Duration</span><i class="fas fa-stopwatch stat-card-icon" style="color: var(--warning-color);"></i></div>
+                        <div class="stat-card-value">3:45</div>
+                         <div class="stat-card-change negative"><i class="fas fa-arrow-down fa-xs"></i> -5.1%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header"><span class="stat-card-title">Subscribers</span><i class="fas fa-users stat-card-icon" style="color: var(--accent-alt);"></i></div>
+                        <div class="stat-card-value">+1,230</div>
+                         <div class="stat-card-change">vs. previous period</div>
+                    </div>
+                </div>
+
+                <!-- Main Charts -->
+                 <div class="widget" style="margin-top: 24px;">
+                    <div class="widget-header">
+                        <h3 class="widget-title">Views Over Time</h3>
+                        <div class="widget-actions"><i class="fas fa-ellipsis-h"></i></div>
+                    </div>
+                    <div class="widget-content"><div class="chart-container"><p>Line Chart: Views per day/week</p></div></div>
+                </div>
+
+                <div class="dashboard-grid" style="margin-top: 24px;">
+                     <div class="widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">Traffic Sources</h3>
+                            <div class="widget-actions"><i class="fas fa-ellipsis-h"></i></div>
+                        </div>
+                         <div class="widget-content"><div class="chart-container"><p>Pie/Donut Chart: External, Search, Direct, etc.</p></div></div>
+                    </div>
+                     <div class="widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">Audience Demographics</h3>
+                            <div class="widget-actions"><i class="fas fa-ellipsis-h"></i></div>
+                        </div>
+                         <div class="widget-content"><div class="chart-container"><p>Bar Chart: Age, Gender, Location</p></div></div>
+                    </div>
+                </div>
+
+                <!-- Top Videos -->
+                 <div class="widget" style="margin-top: 24px;">
+                     <div class="widget-header">
+                         <h3 class="widget-title">Top Videos (Last 30 days)</h3>
+                         <div class="widget-actions"><i class="fas fa-sort-amount-down"></i></div> <!-- Sort icon -->
+                     </div>
+                     <div class="widget-content">
+                         <div class="user-table-container"> <!-- Reuse table styles -->
+                             <table class="user-table">
+                                 <thead>
+                                     <tr>
+                                         <th>Video</th>
+                                         <th>Views</th>
+                                         <th>Watch Time (Hours)</th>
+                                         <th>Avg. Duration</th>
+                                         <th>Likes</th>
+                                     </tr>
+                                 </thead>
+                                 <tbody>
+                                     <tr>
+                                         <td>Advanced CSS Grid Techniques</td>
+                                         <td>5.8K</td>
+                                         <td>150.5</td>
+                                         <td>4:15</td>
+                                         <td>620</td>
+                                     </tr>
+                                      <tr>
+                                         <td>Cooking Pasta Like a Pro</td>
+                                         <td>10.2K</td>
+                                         <td>310.0</td>
+                                         <td>5:30</td>
+                                         <td>1.1K</td>
+                                     </tr>
+                                      <tr>
+                                         <td>Introduction to AI Development</td>
+                                         <td>1.2K</td>
+                                         <td>35.2</td>
+                                         <td>3:10</td>
+                                         <td>150</td>
+                                     </tr>
+                                      <!-- More rows -->
+                                 </tbody>
+                             </table>
+                         </div>
+                     </div>
+                 </div>
+            </main>
+        </div>
+    </div>
+    <!-- <script> // Add JS for charts here </script> -->
+</body>
+</html>

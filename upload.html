@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Video - Video Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+             <div class="sidebar-logo"><i class="fas fa-video"></i><span>VidManage</span></div>
+             <ul class="sidebar-nav">
+                <li><a href="dashboard.html"><i class="fas fa-tachometer-alt fa-fw"></i> Dashboard</a></li>
+                <li><a href="videos.html"><i class="fas fa-film fa-fw"></i> Videos</a></li>
+                <li><a href="upload.html"><i class="fas fa-upload fa-fw"></i> Upload</a></li>
+                <li><a href="analytics.html"><i class="fas fa-chart-bar fa-fw"></i> Analytics</a></li>
+                <li><a href="comments.html"><i class="fas fa-comments fa-fw"></i> Comments</a></li>
+                <li><a href="users.html"><i class="fas fa-users-cog fa-fw"></i> User Roles</a></li>
+                <li><a href="settings.html" class="active"><i class="fas fa-cog fa-fw"></i> Settings</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-container">
+            <header class="main-header">
+                <h1 class="header-title">Upload New Video</h1>
+                 <div class="header-actions">
+                     <!-- Có thể bỏ nút Add video ở đây -->
+                     <div class="user-profile"> <img src="https://placehold.co/40x40/8b949e/e6edf3?text=JD" alt="User Avatar"><span>John Doe</span><i class="fas fa-chevron-down fa-xs"></i></div>
+                 </div>
+            </header>
+
+            <main class="page-content">
+                <form class="upload-form">
+                    <div class="form-group">
+                        <label for="video-title">Video Title</label>
+                        <input type="text" id="video-title" class="form-control" placeholder="Enter video title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="video-description">Description</label>
+                        <textarea id="video-description" class="form-control" placeholder="Tell viewers about your video"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="video-category">Category</label>
+                        <select id="video-category" class="form-control">
+                            <option value="">Select a category</option>
+                            <option value="tech">Technology</option>
+                            <option value="gaming">Gaming</option>
+                            <option value="education">Education</option>
+                            <option value="music">Music</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                     <div class="form-group">
+                         <label>Video File</label>
+                         <div class="upload-area" id="video-upload-area">
+                             <input type="file" id="video-file" accept="video/*">
+                             <i class="fas fa-cloud-upload-alt"></i>
+                             <p><strong>Drag & Drop</strong> or <strong>Click to Browse</strong></p>
+                             <p class="text-muted" style="font-size: 12px;">MP4, AVI, MOV recommended, up to 1GB</p>
+                         </div>
+                         <!-- Hiển thị tên file và progress bar (JS cần thiết) -->
+                         <div id="file-info" style="margin-top: 10px; font-size: 13px;"></div>
+                         <div class="upload-progress" id="upload-progress-bar" style="height: 8px; background-color: var(--bg-tertiary); border-radius: 4px; overflow: hidden; display: none;">
+                            <div style="width: 0%; height: 100%; background-color: var(--purple-accent); transition: width 0.3s ease;"></div>
+                         </div>
+                     </div>
+
+                     <!-- Optional: Thumbnail Upload -->
+                     <div class="form-group">
+                        <label for="video-thumbnail">Custom Thumbnail (Optional)</label>
+                        <input type="file" id="video-thumbnail" class="form-control" accept="image/*">
+                         <p class="text-muted" style="font-size: 11px; margin-top: 5px;">Recommended size: 1280x720px</p>
+                    </div>
+
+
+                    <div class="upload-button-container">
+                        <button type="submit" class="button button-upload">
+                            <i class="fas fa-paper-plane"></i> Upload Video
+                        </button>
+                    </div>
+                </form>
+            </main>
+        </div>
+    </div>
+    <script>
+        // Basic JS for drag & drop visual cue and file name display
+        const uploadArea = document.getElementById('video-upload-area');
+        const fileInput = document.getElementById('video-file');
+        const fileInfo = document.getElementById('file-info');
+        const progressBar = document.getElementById('upload-progress-bar');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--purple-hover)';
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = 'var(--border-color)';
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--border-color)';
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                displayFileInfo(fileInput.files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                displayFileInfo(fileInput.files[0]);
+            } else {
+                 fileInfo.textContent = '';
+                 progressBar.style.display = 'none';
+            }
+        });
+
+        function displayFileInfo(file) {
+             fileInfo.textContent = `Selected file: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+             // Reset and show progress bar (actual progress needs server interaction)
+             progressBar.style.display = 'block';
+             progressBar.firstElementChild.style.width = '0%';
+             // Simulate upload progress for demo
+             // let width = 0;
+             // const interval = setInterval(() => {
+             //     width += 10;
+             //     progressBar.firstElementChild.style.width = `${width}%`;
+             //     if (width >= 100) clearInterval(interval);
+             // }, 200);
+        }
+    </script>
+</body>
+</html>
