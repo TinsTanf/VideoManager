@@ -293,12 +293,14 @@ body {
 .chart-container {
     height: 300px; /* Chiều cao cố định cho biểu đồ */
     /* Thêm style cho thư viện biểu đồ bạn dùng (Chart.js, ApexCharts, etc.) */
-    background-color: var(--bg-tertiary);
+    /* background-color: var(--bg-tertiary); */ /* Bỏ background để canvas tự vẽ */
     border-radius: var(--border-radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--text-secondary);
+    position: relative; /* Cần cho Chart.js responsive */
+    width: 100%; /* Đảm bảo chiếm hết chiều rộng widget */
 }
 .recent-videos-list {
     list-style: none;
@@ -327,11 +329,10 @@ body {
     font-weight: 500;
     margin-bottom: 3px;
     color: var(--text-primary);
-    /* Giới hạn text nếu quá dài */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 250px; /* Điều chỉnh nếu cần */
+    max-width: 250px;
 }
 .recent-videos-info p {
     font-size: 12px;
@@ -344,7 +345,7 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    flex-wrap: wrap; /* Cho phép xuống dòng */
+    flex-wrap: wrap;
     gap: 15px;
 }
 .search-bar input {
@@ -353,7 +354,7 @@ body {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-md);
     color: var(--text-primary);
-    min-width: 250px; /* Độ rộng tối thiểu */
+    min-width: 250px;
 }
 .video-list-container {
     display: flex;
@@ -367,10 +368,10 @@ body {
     padding: 15px;
     border-radius: var(--border-radius-lg);
     border: 1px solid var(--border-color);
-    align-items: flex-start; /* Căn theo top */
+    align-items: flex-start;
 }
 .video-list-item-thumbnail img {
-    width: 160px; /* Kích thước thumbnail */
+    width: 160px;
     height: 90px;
     object-fit: cover;
     border-radius: var(--border-radius-md);
@@ -400,13 +401,13 @@ body {
 .video-list-item-actions {
     display: flex;
     gap: 8px;
-    flex-shrink: 0; /* Không co lại */
+    flex-shrink: 0;
 }
 
 /* --- Upload Page Specific --- */
 .upload-form {
-    max-width: 700px; /* Giới hạn chiều rộng form */
-    margin: 0 auto; /* Căn giữa form */
+    max-width: 700px;
+    margin: 0 auto;
     background-color: var(--bg-secondary);
     padding: 30px;
     border-radius: var(--border-radius-lg);
@@ -433,7 +434,7 @@ body {
 }
 .form-control:focus {
     outline: none;
-    border-color: var(--purple-accent); /* Màu tím khi focus */
+    border-color: var(--purple-accent);
     box-shadow: 0 0 0 3px rgba(163, 113, 247, 0.3);
 }
 textarea.form-control {
@@ -462,17 +463,16 @@ textarea.form-control {
     color: var(--text-secondary);
 }
 .upload-area input[type="file"] {
-    display: none; /* Ẩn input gốc */
+    display: none;
 }
 .upload-progress {
     margin-top: 15px;
-    /* Style cho thanh progress bar nếu có */
 }
 .upload-button-container {
-    text-align: right; /* Đặt nút sang phải */
+    text-align: right;
     margin-top: 30px;
 }
-.button-upload { /* Nút upload màu tím */
+.button-upload {
     background-color: var(--purple-accent);
     color: white;
 }
@@ -485,9 +485,9 @@ textarea.form-control {
 .video-detail-layout {
     display: flex;
     gap: 24px;
-    flex-direction: column; /* Mặc định xếp chồng */
+    flex-direction: column;
 }
-@media (min-width: 992px) { /* Layout 2 cột trên màn hình lớn hơn */
+@media (min-width: 992px) {
     .video-detail-layout {
         flex-direction: row;
     }
@@ -495,7 +495,7 @@ textarea.form-control {
         flex-grow: 1;
     }
     .video-sidebar {
-        width: 300px; /* Chiều rộng cho sidebar gợi ý */
+        width: 300px;
         flex-shrink: 0;
     }
 }
@@ -503,17 +503,17 @@ textarea.form-control {
 .video-player-container {
     background-color: black;
     border-radius: var(--border-radius-lg);
-    overflow: hidden; /* Đảm bảo video nằm trong border */
-    aspect-ratio: 16 / 9; /* Giữ tỷ lệ khung hình */
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
     margin-bottom: 20px;
-    position: relative; /* Cho các điều khiển player */
+    position: relative;
 }
-.video-player-container video { /* Giả sử dùng thẻ video HTML5 */
+.video-player-container video {
     display: block;
     width: 100%;
     height: 100%;
 }
-.video-info h1 { /* Tiêu đề video */
+.video-info h1 {
     font-size: 22px;
     font-weight: 600;
     margin-bottom: 10px;
@@ -558,9 +558,9 @@ textarea.form-control {
     margin-bottom: 20px;
     line-height: 1.6;
     font-size: 14px;
-    color: var(--text-secondary); /* Mô tả màu nhạt hơn */
+    color: var(--text-secondary);
 }
-.video-description strong { /* Nhấn mạnh phần đầu mô tả */
+.video-description strong {
      color: var(--text-primary);
      display: block;
      margin-bottom: 5px;
@@ -577,7 +577,7 @@ textarea.form-control {
     gap: 10px;
     margin-bottom: 20px;
 }
-.comment-form img { /* Avatar người dùng */
+.comment-form img {
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -585,20 +585,20 @@ textarea.form-control {
 }
 .comment-form textarea {
     flex-grow: 1;
-    min-height: 40px; /* Chiều cao tối thiểu */
-    height: 40px; /* Chiều cao ban đầu */
+    min-height: 40px;
+    height: 40px;
     padding: 8px 12px;
     background-color: var(--bg-tertiary);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-md);
     color: var(--text-primary);
-    resize: none; /* Không cho resize ban đầu */
-    overflow: hidden; /* Ẩn scrollbar */
-    transition: height 0.1s ease; /* Hiệu ứng khi expand */
+    resize: none;
+    overflow: hidden;
+    transition: height 0.1s ease;
 }
-.comment-form textarea:focus { /* Expand khi focus */
+.comment-form textarea:focus {
      height: 80px;
-     resize: vertical; /* Cho phép resize dọc khi focus */
+     resize: vertical;
  }
 
 .comment-list {
@@ -613,7 +613,7 @@ textarea.form-control {
     display: flex;
     gap: 15px;
 }
-.comment-item img { /* Avatar người bình luận */
+.comment-item img {
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -653,25 +653,25 @@ textarea.form-control {
 /* --- User Roles Specific --- */
 .user-management-controls {
      display: flex;
-     justify-content: flex-end; /* Đặt nút Add sang phải */
+     justify-content: flex-end;
      margin-bottom: 20px;
 }
 .user-table-container {
-    overflow-x: auto; /* Cho phép cuộn ngang nếu bảng quá rộng */
+    overflow-x: auto;
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-lg);
 }
 .user-table {
     width: 100%;
-    border-collapse: collapse; /* Gộp đường viền */
+    border-collapse: collapse;
 }
 .user-table th,
 .user-table td {
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
-    white-space: nowrap; /* Ngăn text xuống dòng */
+    white-space: nowrap;
 }
 .user-table th {
     font-size: 12px;
@@ -680,7 +680,6 @@ textarea.form-control {
     text-transform: uppercase;
     background-color: var(--bg-tertiary);
 }
-/* Bỏ border đáy cho hàng cuối cùng */
 .user-table tr:last-child td {
     border-bottom: none;
 }
@@ -703,7 +702,7 @@ textarea.form-control {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-sm);
     color: var(--text-primary);
-    min-width: 100px; /* Độ rộng tối thiểu */
+    min-width: 100px;
 }
 .status-badge {
     display: inline-block;
@@ -714,11 +713,11 @@ textarea.form-control {
     text-transform: uppercase;
 }
 .status-badge.active {
-    background-color: rgba(59, 185, 80, 0.1); /* Nền xanh lá mờ */
+    background-color: rgba(59, 185, 80, 0.1);
     color: var(--accent-alt);
 }
 .status-badge.inactive {
-    background-color: rgba(139, 148, 158, 0.1); /* Nền xám mờ */
+    background-color: rgba(139, 148, 158, 0.1);
     color: var(--text-secondary);
 }
 .user-table td .actions {
@@ -726,97 +725,26 @@ textarea.form-control {
     gap: 8px;
 }
 
-/* --- Responsive Adjustments --- */
-@media (max-width: 992px) {
-    .sidebar {
-        /* Có thể ẩn sidebar hoặc làm nó hẹp hơn trên tablet */
-        /* position: fixed; */ /* Hoặc absolute */
-        /* transform: translateX(-100%); */ /* Ẩn ban đầu */
-        /* transition: transform 0.3s ease; */
-        /* width: 220px; */
-    }
-     /* Cần thêm Javascript để toggle sidebar */
-    /* .sidebar.open {
-        transform: translateX(0);
-    } */
-     .main-container {
-        /* margin-left: 0; */ /* Reset margin nếu sidebar ẩn */
-    }
-
-     /* Dashboard Grid */
-    .dashboard-grid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Điều chỉnh minmax */
-    }
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        display: none; /* Ẩn hoàn toàn sidebar trên mobile, dùng menu khác nếu cần */
-    }
-     .main-container {
-        width: 100%; /* Chiếm toàn bộ chiều rộng */
-    }
-     .main-header {
-         padding: 10px 15px;
-         /* Có thể thêm nút burger menu ở đây */
-    }
-     .header-title {
-         font-size: 18px;
-    }
-     .page-content {
-         padding: 15px;
-    }
-     .widget { padding: 15px; }
-     .widget-header { padding-bottom: 10px; margin-bottom: 10px; }
-     .widget-title { font-size: 15px; }
-
-     /* Video List Item on Mobile */
-    .video-list-item {
-        flex-direction: column; /* Stack thumbnail và details */
-        gap: 10px;
-    }
-    .video-list-item-thumbnail img {
-        width: 100%; /* Chiếm full chiều rộng */
-        height: auto; /* Giữ tỷ lệ */
-        max-height: 180px; /* Giới hạn chiều cao */
-    }
-    .video-list-item-actions {
-        margin-top: 10px;
-        width: 100%; /* Action chiếm full width */
-        justify-content: flex-end; /* Đẩy nút sang phải */
-    }
-
-    /* Upload Form */
-    .upload-form { padding: 20px; }
-
-    /* Video Detail */
-    .video-detail-layout { gap: 15px; }
-    .video-info h1 { font-size: 18px; }
-    .video-stats-actions { flex-direction: column; align-items: flex-start;}
-
-    /* User Table */
-    /* Có thể cần xử lý bảng khác trên mobile, ví dụ hiển thị dạng card */
-    /* style.css - Thêm vào cuối file */
+/* ===== START: Thêm CSS cho Comments và Settings ===== */
 
 /* --- Analytics Page Specific --- */
 .date-range-controls {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
-    align-items: center; /* Căn giữa các item */
+    align-items: center;
 }
 .date-range-controls label {
     font-size: 13px;
     color: var(--text-secondary);
 }
-/* Style cho thư viện date picker nếu bạn dùng */
 
 /* --- Comments Page Specific --- */
 .comment-filters {
     display: flex;
     gap: 15px;
     margin-bottom: 20px;
-    flex-wrap: wrap; /* Cho phép xuống dòng */
+    flex-wrap: wrap;
     align-items: center;
 }
 .comment-filters select,
@@ -836,24 +764,24 @@ textarea.form-control {
 .comment-management-list {
     display: flex;
     flex-direction: column;
-    gap: 1px; /* Tạo đường kẻ mảnh giữa các item */
-    background-color: var(--border-color); /* Màu nền đường kẻ */
+    gap: 1px;
+    background-color: var(--border-color);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-lg);
-    overflow: hidden; /* Đảm bảo border radius hoạt động */
+    overflow: hidden;
 }
 .comment-management-item {
     display: flex;
     gap: 15px;
     padding: 15px;
-    background-color: var(--bg-secondary); /* Nền của từng comment */
+    background-color: var(--bg-secondary);
     align-items: flex-start;
 }
 .comment-select-checkbox input[type="checkbox"] {
-    margin-top: 4px; /* Căn chỉnh checkbox */
+    margin-top: 4px;
      width: 16px;
      height: 16px;
-     accent-color: var(--accent-color); /* Màu khi check */
+     accent-color: var(--accent-color);
 }
 .comment-item-main {
     flex-grow: 1;
@@ -898,20 +826,20 @@ textarea.form-control {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 150px; /* Giới hạn chiều dài tiêu đề video */
+    max-width: 150px;
 }
 .comment-item-video-context a:hover {
     color: var(--accent-color);
 }
 .comment-item-actions {
     display: flex;
-    flex-direction: column; /* Xếp nút theo chiều dọc */
+    flex-direction: column;
     gap: 8px;
-    align-items: flex-end; /* Căn nút sang phải */
+    align-items: flex-end;
     flex-shrink: 0;
 }
 .comment-item-actions .button {
-    padding: 4px 8px; /* Nút nhỏ hơn */
+    padding: 4px 8px;
     font-size: 12px;
 }
 .button-approve {
@@ -931,12 +859,14 @@ textarea.form-control {
 .settings-section {
     margin-bottom: 30px;
 }
-.settings-section h2 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border-color);
+.settings-section h2.widget-header { /* Áp dụng style widget-header cho tiêu đề section */
+    margin-bottom: 20px !important; /* Override margin */
+    border-bottom: 1px solid var(--border-color) !important;
+    padding-bottom: 10px !important;
+    font-size: 18px !important; /* Điều chỉnh kích thước nếu muốn */
+    display: flex; /* Đảm bảo icon thẳng hàng */
+    align-items: center;
+    gap: 8px; /* Khoảng cách icon và text */
 }
 .profile-avatar-section {
     display: flex;
@@ -960,17 +890,16 @@ textarea.form-control {
     border-bottom: none;
 }
 .notification-item label {
-    margin-bottom: 0; /* Override form-group label margin */
+    margin-bottom: 0;
     font-weight: 500;
 }
 .notification-item .text-muted {
     font-size: 12px;
 }
-/* Basic Toggle Switch Style (Optional - can use checkbox) */
 .toggle-switch {
     position: relative;
     display: inline-block;
-    width: 44px; /* Kích thước switch */
+    width: 44px;
     height: 24px;
 }
 .toggle-switch input {
@@ -988,12 +917,12 @@ textarea.form-control {
     background-color: var(--bg-tertiary);
     border: 1px solid var(--border-color);
     transition: .4s;
-    border-radius: 24px; /* Bo tròn */
+    border-radius: 24px;
 }
 .slider:before {
     position: absolute;
     content: "";
-    height: 16px; /* Kích thước nút tròn */
+    height: 16px;
     width: 16px;
     left: 3px;
     bottom: 3px;
@@ -1006,7 +935,7 @@ input:checked + .slider {
     border-color: var(--accent-color);
 }
 input:checked + .slider:before {
-    transform: translateX(20px); /* Di chuyển nút tròn */
+    transform: translateX(20px);
     background-color: white;
 }
 .settings-actions {
@@ -1014,11 +943,77 @@ input:checked + .slider:before {
     text-align: right;
 }
 
-/* Responsive Adjustments */
+/* ===== END: Thêm CSS cho Comments và Settings ===== */
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) {
+    .sidebar {
+        /* position: fixed; */
+        /* transform: translateX(-100%); */
+        /* transition: transform 0.3s ease; */
+        /* width: 220px; */
+    }
+    /* .sidebar.open {
+        transform: translateX(0);
+    } */
+     .main-container {
+        /* margin-left: 0; */
+    }
+    .dashboard-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
 @media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+     .main-container {
+        width: 100%;
+    }
+     .main-header {
+         padding: 10px 15px;
+    }
+     .header-title {
+         font-size: 18px;
+    }
+     .page-content {
+         padding: 15px;
+    }
+     .widget { padding: 15px; }
+     .widget-header { padding-bottom: 10px; margin-bottom: 10px; }
+     .widget-title { font-size: 15px; }
+
+     /* Video List Item on Mobile */
+    .video-list-item {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .video-list-item-thumbnail img {
+        width: 100%;
+        height: auto;
+        max-height: 180px;
+    }
+    .video-list-item-actions {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    /* Upload Form */
+    .upload-form { padding: 20px; }
+
+    /* Video Detail */
+    .video-detail-layout { gap: 15px; }
+    .video-info h1 { font-size: 18px; }
+    .video-stats-actions { flex-direction: column; align-items: flex-start;}
+
+    /* User Table */
+    /* ... (Cần xử lý bảng khác nếu muốn) ... */
+
     /* Comments Page on Mobile */
     .comment-management-item {
-        flex-direction: column; /* Stack các phần */
+        flex-direction: column;
         gap: 10px;
     }
     .comment-item-main {
@@ -1026,9 +1021,9 @@ input:checked + .slider:before {
         gap: 10px;
     }
     .comment-item-actions {
-        flex-direction: row; /* Nút lại nằm ngang */
+        flex-direction: row;
         width: 100%;
-        justify-content: flex-end; /* Đẩy nút sang phải */
+        justify-content: flex-end;
     }
 
     /* Settings Page on Mobile */
@@ -1041,5 +1036,15 @@ input:checked + .slider:before {
         align-items: flex-start;
         gap: 8px;
     }
+    /* Bỏ sticky trên mobile nếu muốn */
+    .header { position: relative; }
+    .navbar { position: relative; top: 0; }
+    .toolbar { position: relative; top: 0; }
+    .main-content { min-height: unset; }
 }
+
+/* Thêm media query cho màn hình nhỏ hơn nữa nếu cần */
+@media (max-width: 576px) {
+    .user-profile span { display: none; } /* Ẩn tên user */
+    /* ... các điều chỉnh khác ... */
 }

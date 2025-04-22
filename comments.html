@@ -1,132 +1,132 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comments - Video Management</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-logo"><i class="fas fa-video"></i><span>VidManage</span></div>
-           <ul class="sidebar-nav">
-               <li><a href="dashboard.html"><i class="fas fa-tachometer-alt fa-fw"></i> Dashboard</a></li>
-               <li><a href="videos.html"><i class="fas fa-film fa-fw"></i> Videos</a></li>
-               <li><a href="upload.html"><i class="fas fa-upload fa-fw"></i> Upload</a></li>
-               <li><a href="analytics.html"><i class="fas fa-chart-bar fa-fw"></i> Analytics</a></li>
-               <li><a href="comments.html" class="active"><i class="fas fa-comments fa-fw"></i> Comments</a></li>
-               <li><a href="users.html"><i class="fas fa-users-cog fa-fw"></i> User Roles</a></li>
-               <li><a href="settings.html"><i class="fas fa-cog fa-fw"></i> Settings</a></li>
-           </ul>
-       </aside>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Comments - Video Management</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div class="app-container">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-logo"><i class="fas fa-video"></i><span>VidManage</span></div>
+            <ul class="sidebar-nav">
+                <li><a href="dashboard.html"><i class="fas fa-tachometer-alt fa-fw"></i> Dashboard</a></li>
+                <li><a href="videos.html"><i class="fas fa-film fa-fw"></i> Videos</a></li>
+                <li><a href="upload.html"><i class="fas fa-upload fa-fw"></i> Upload</a></li>
+                <li><a href="analytics.html"><i class="fas fa-chart-bar fa-fw"></i> Analytics</a></li>
+                <li><a href="comments.html" class="active"><i class="fas fa-comments fa-fw"></i> Comments</a></li>
+                <li><a href="users.html"><i class="fas fa-users-cog fa-fw"></i> User Roles</a></li>
+                <li><a href="settings.html"><i class="fas fa-cog fa-fw"></i> Settings</a></li>
+            </ul>
+        </aside>
 
-        <!-- Main Content -->
-        <div class="main-container">
-            <header class="main-header">
-                <h1 class="header-title">Manage Comments</h1>
-                 <div class="header-actions">
-                     <div class="user-profile"> <img src="https://placehold.co/40x40/8b949e/e6edf3?text=JD" alt="User Avatar"><span>John Doe</span><i class="fas fa-chevron-down fa-xs"></i></div>
-                 </div>
-            </header>
-
-            <main class="page-content">
-                <div class="comment-filters">
-                    <select>
-                        <option value="all">All Videos</option>
-                        <option value="video1">Introduction to AI...</option>
-                        <option value="video2">Advanced CSS Grid...</option>
-                    </select>
-                    <select>
-                        <option value="published">Published Comments</option>
-                        <option value="pending">Held for Review</option>
-                        <option value="spam">Likely Spam</option>
-                    </select>
-                     <input type="text" placeholder="Search comments...">
-                     <button class="button button-secondary"><i class="fas fa-search"></i> Search</button>
-                </div>
-
-                <div class="bulk-actions">
-                    <!-- Add Bulk action buttons (Approve All, Delete Selected etc.) -->
-                     <button class="button button-secondary button-approve"><i class="fas fa-check"></i> Approve Selected</button>
-                     <button class="button button-secondary button-spam"><i class="fas fa-shield-virus"></i> Mark as Spam</button>
-                     <button class="button button-secondary button-danger"><i class="fas fa-trash"></i> Delete Selected</button>
-                </div>
-
-                <div class="comment-management-list">
-                    <!-- Comment Item 1 -->
-                    <div class="comment-management-item">
-                        <div class="comment-select-checkbox">
-                            <input type="checkbox">
-                        </div>
-                        <div class="comment-item-main">
-                             <img src="https://placehold.co/36x36/79c0ff/0d1117?text=AS" alt="Avatar" style="border-radius: 50%; width: 36px; height: 36px; flex-shrink: 0;">
-                             <div class="comment-item-details">
-                                 <div><span class="comment-author">Alice Smith</span><span class="comment-time">1 day ago</span></div>
-                                 <p class="comment-text">Great introduction! Really cleared up some concepts for me. Looking forward to more advanced topics.</p>
-                                 <div class="comment-item-video-context">
-                                     <img src="https://placehold.co/80x45/161b22/e6edf3?text=Video+1" alt="Video">
-                                     <span>On:</span> <a href="video-detail.html">Introduction to AI Development</a>
-                                 </div>
-                             </div>
-                        </div>
-                         <div class="comment-item-actions">
-                              <button class="button button-approve"><i class="fas fa-check"></i> Approve</button>
-                              <button class="button button-danger"><i class="fas fa-trash"></i> Delete</button>
-                         </div>
+            <!-- Main Content -->
+            <div class="main-container">
+                <header class="main-header">
+                    <h1 class="header-title">Manage Comments</h1>
+                    <div class="header-actions">
+                        <div class="user-profile"> <img src="https://placehold.co/40x40/8b949e/e6edf3?text=JD" alt="User Avatar"><span>John Doe</span><i class="fas fa-chevron-down fa-xs"></i></div>
                     </div>
-                    <!-- Comment Item 2 (Pending) -->
-                     <div class="comment-management-item">
-                        <div class="comment-select-checkbox"><input type="checkbox"></div>
-                        <div class="comment-item-main">
-                            <img src="https://placehold.co/36x36/a371f7/0d1117?text=BM" alt="Avatar" style="border-radius: 50%; width: 36px; height: 36px; flex-shrink: 0;">
-                             <div class="comment-item-details">
-                                 <div><span class="comment-author">Bob Miller</span><span class="comment-time">2 days ago</span></div>
-                                 <p class="comment-text">Check out this amazing offer!!! www.example-spam-link.com</p>
-                                 <div class="comment-item-video-context">
-                                      <img src="https://placehold.co/80x45/161b22/e6edf3?text=Video+2" alt="Video">
-                                     <span>On:</span> <a href="#">Advanced CSS Grid Techniques</a>
-                                 </div>
-                             </div>
-                        </div>
-                         <div class="comment-item-actions">
-                              <button class="button button-approve"><i class="fas fa-check"></i> Approve</button>
-                              <button class="button button-spam"><i class="fas fa-shield-virus"></i> Spam</button>
-                              <button class="button button-danger"><i class="fas fa-trash"></i> Delete</button>
-                         </div>
-                    </div>
-                      <!-- Comment Item 3 -->
-                     <div class="comment-management-item">
-                        <div class="comment-select-checkbox"><input type="checkbox"></div>
-                        <div class="comment-item-main">
-                            <img src="https://placehold.co/36x36/3fb950/0d1117?text=CG" alt="Avatar" style="border-radius: 50%; width: 36px; height: 36px; flex-shrink: 0;">
-                             <div class="comment-item-details">
-                                 <div><span class="comment-author">Charlie Green</span><span class="comment-time">3 days ago</span></div>
-                                 <p class="comment-text">Very helpful, thank you!</p>
-                                 <div class="comment-item-video-context">
-                                      <img src="https://placehold.co/80x45/161b22/e6edf3?text=Video+1" alt="Video">
-                                      <span>On:</span> <a href="video-detail.html">Introduction to AI Development</a>
-                                 </div>
-                             </div>
-                        </div>
-                         <div class="comment-item-actions">
-                              <button class="button button-danger"><i class="fas fa-trash"></i> Delete</button>
-                         </div>
-                    </div>
-                    <!-- More comments -->
-                </div>
+                </header>
 
-                 <!-- Pagination -->
-                 <div style="text-align: center; margin-top: 30px;">
-                     <button class="button button-secondary">« Prev</button>
-                     <span style="margin: 0 15px; color: var(--text-secondary);">Page 1 of 5</span>
-                     <button class="button button-secondary">Next »</button>
-                 </div>
-            </main>
+                <main class="page-content">
+                    <div class="comment-filters">
+                        <select>
+                            <option value="all">All Videos</option>
+                            <option value="video1">Introduction to AI...</option>
+                            <option value="video2">Advanced CSS Grid...</option>
+                        </select>
+                        <select>
+                            <option value="published">Published Comments</option>
+                            <option value="pending">Held for Review</option>
+                            <option value="spam">Likely Spam</option>
+                        </select>
+                        <input type="text" placeholder="Search comments...">
+                        <button class="button button-secondary"><i class="fas fa-search"></i> Search</button>
+                    </div>
+
+                    <div class="bulk-actions">
+                        <!-- Add Bulk action buttons (Approve All, Delete Selected etc.) -->
+                        <button class="button button-secondary button-approve"><i class="fas fa-check"></i> Approve Selected</button>
+                        <button class="button button-secondary button-spam"><i class="fas fa-shield-virus"></i> Mark as Spam</button>
+                        <button class="button button-secondary button-danger"><i class="fas fa-trash"></i> Delete Selected</button>
+                    </div>
+
+                    <div class="comment-management-list">
+                        <!-- Comment Item 1 -->
+                        <div class="comment-management-item">
+                            <div class="comment-select-checkbox">
+                                <input type="checkbox">
+                            </div>
+                            <div class="comment-item-main">
+                                <img src="https://placehold.co/36x36/79c0ff/0d1117?text=AS" alt="Avatar" style="border-radius: 50%; width: 36px; height: 36px; flex-shrink: 0;">
+                                <div class="comment-item-details">
+                                    <div><span class="comment-author">Alice Smith</span><span class="comment-time">1 day ago</span></div>
+                                    <p class="comment-text">Great introduction! Really cleared up some concepts for me. Looking forward to more advanced topics.</p>
+                                    <div class="comment-item-video-context">
+                                        <img src="https://placehold.co/80x45/161b22/e6edf3?text=Video+1" alt="Video">
+                                        <span>On:</span> <a href="video-detail.html">Introduction to AI Development</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="comment-item-actions">
+                                <button class="button button-approve"><i class="fas fa-check"></i> Approve</button>
+                                <button class="button button-danger"><i class="fas fa-trash"></i> Delete</button>
+                            </div>
+                        </div>
+                        <!-- Comment Item 2 (Pending) -->
+                        <div class="comment-management-item">
+                            <div class="comment-select-checkbox"><input type="checkbox"></div>
+                            <div class="comment-item-main">
+                                <img src="https://placehold.co/36x36/a371f7/0d1117?text=BM" alt="Avatar" style="border-radius: 50%; width: 36px; height: 36px; flex-shrink: 0;">
+                                <div class="comment-item-details">
+                                    <div><span class="comment-author">Bob Miller</span><span class="comment-time">2 days ago</span></div>
+                                    <p class="comment-text">Check out this amazing offer!!! www.example-spam-link.com</p>
+                                    <div class="comment-item-video-context">
+                                        <img src="https://placehold.co/80x45/161b22/e6edf3?text=Video+2" alt="Video">
+                                        <span>On:</span> <a href="#">Advanced CSS Grid Techniques</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="comment-item-actions">
+                                <button class="button button-approve"><i class="fas fa-check"></i> Approve</button>
+                                <button class="button button-spam"><i class="fas fa-shield-virus"></i> Spam</button>
+                                <button class="button button-danger"><i class="fas fa-trash"></i> Delete</button>
+                            </div>
+                        </div>
+                        <!-- Comment Item 3 -->
+                        <div class="comment-management-item">
+                            <div class="comment-select-checkbox"><input type="checkbox"></div>
+                            <div class="comment-item-main">
+                                <img src="https://placehold.co/36x36/3fb950/0d1117?text=CG" alt="Avatar" style="border-radius: 50%; width: 36px; height: 36px; flex-shrink: 0;">
+                                <div class="comment-item-details">
+                                    <div><span class="comment-author">Charlie Green</span><span class="comment-time">3 days ago</span></div>
+                                    <p class="comment-text">Very helpful, thank you!</p>
+                                    <div class="comment-item-video-context">
+                                        <img src="https://placehold.co/80x45/161b22/e6edf3?text=Video+1" alt="Video">
+                                        <span>On:</span> <a href="video-detail.html">Introduction to AI Development</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="comment-item-actions">
+                                <button class="button button-danger"><i class="fas fa-trash"></i> Delete</button>
+                            </div>
+                        </div>
+                        <!-- More comments -->
+                    </div>
+
+                    <!-- Pagination -->
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button class="button button-secondary">« Prev</button>
+                        <span style="margin: 0 15px; color: var(--text-secondary);">Page 1 of 5</span>
+                        <button class="button button-secondary">Next »</button>
+                    </div>
+                </main>
+            </div>
         </div>
-    </div>
-</body>
-</html>
+    </body>
+    </html>
