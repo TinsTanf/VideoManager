@@ -7,6 +7,32 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Đảm bảo chart container có chiều cao */
+        .chart-container {
+            height: 300px; /* Hoặc chiều cao bạn muốn */
+            position: relative; /* Cần thiết cho Chart.js responsive */
+            background-color: transparent; /* Bỏ background cũ nếu có */
+        }
+         /* Tùy chỉnh màu tooltip cho phù hợp theme */
+        .chartjs-tooltip {
+            background: rgba(13, 17, 23, 0.9) !important; /* Gần giống --bg-primary */
+            border: 1px solid var(--border-color) !important;
+            border-radius: var(--border-radius-sm) !important;
+            color: var(--text-primary) !important;
+            padding: 8px 10px !important;
+        }
+        .chartjs-tooltip-caret {
+            display: none !important; /* Ẩn mũi tên tooltip mặc định nếu muốn */
+        }
+        .chartjs-tooltip-title {
+            margin-bottom: 5px !important;
+            font-weight: 600 !important;
+        }
+        .chartjs-tooltip-body {
+            font-size: 13px !important;
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -20,10 +46,10 @@
                 <li><a href="dashboard.html" class="active"><i class="fas fa-tachometer-alt fa-fw"></i> Dashboard</a></li>
                 <li><a href="videos.html"><i class="fas fa-film fa-fw"></i> Videos</a></li>
                 <li><a href="upload.html"><i class="fas fa-upload fa-fw"></i> Upload</a></li>
-                <li><a href="analytics.html"><i class="fas fa-chart-bar fa-fw"></i> Analytics</a></li> <!-- Đã đúng -->
-                <li><a href="comments.html"><i class="fas fa-comments fa-fw"></i> Comments</a></li> <!-- Đã đúng -->
+                <li><a href="analytics.html"><i class="fas fa-chart-bar fa-fw"></i> Analytics</a></li>
+                <li><a href="comments.html"><i class="fas fa-comments fa-fw"></i> Comments</a></li>
                 <li><a href="users.html"><i class="fas fa-users-cog fa-fw"></i> User Roles</a></li>
-                <li><a href="settings.html"><i class="fas fa-cog fa-fw"></i> Settings</a></li> <!-- SỬA Ở ĐÂY: href="#" thành href="settings.html" -->
+                <li><a href="settings.html"><i class="fas fa-cog fa-fw"></i> Settings</a></li>
             </ul>
         </aside>
 
@@ -92,8 +118,8 @@
                         </div>
                         <div class="widget-content">
                             <div class="chart-container">
-                                <!-- Nhúng biểu đồ JS vào đây -->
-                                <p>Chart Area (e.g., Line Chart)</p>
+                                <!-- THAY THẾ <p> BẰNG <canvas> -->
+                                <canvas id="viewStatsChart"></canvas>
                             </div>
                         </div>
                     </div>
@@ -141,6 +167,116 @@
             </main>
         </div>
     </div>
-    <!-- Add JS for Charts if needed -->
+
+    <!-- THÊM THƯ VIỆN CHART.JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+    <!-- THÊM SCRIPT ĐỂ VẼ BIỂU ĐỒ -->
+    <script>
+        // Đợi DOM tải xong
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('viewStatsChart'); // Lấy canvas context
+
+            if (ctx) { // Kiểm tra xem canvas có tồn tại không
+                 ctx.getContext('2d'); // Gọi getContext để khởi tạo
+
+                // Dữ liệu mẫu (thay thế bằng dữ liệu thực tế của bạn)
+                const labels = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7', 'Day 8', 'Day 9', 'Day 10', 'Day 11', 'Day 12', 'Day 13', 'Day 14', 'Day 15', 'Day 16', 'Day 17', 'Day 18', 'Day 19', 'Day 20', 'Day 21', 'Day 22', 'Day 23', 'Day 24', 'Day 25', 'Day 26', 'Day 27', 'Day 28', 'Day 29', 'Day 30'];
+                const viewsData = [1200, 1500, 1300, 1800, 1600, 1900, 2100, 2000, 2300, 2500, 2400, 2700, 2800, 2600, 3000, 3100, 2900, 3300, 3500, 3400, 3700, 3600, 3900, 4100, 4000, 4300, 4500, 4400, 4700, 4800]; // 30 ngày dữ liệu
+
+                // Lấy màu từ biến CSS (cần đảm bảo biến này được định nghĩa)
+                // Lưu ý: Cách lấy giá trị biến CSS có thể khác nhau tùy trình duyệt cũ,
+                // nhưng cách này hoạt động tốt trên trình duyệt hiện đại.
+                const style = getComputedStyle(document.documentElement);
+                const accentColor = style.getPropertyValue('--accent-color').trim() || '#58a6ff';
+                const borderColor = style.getPropertyValue('--border-color').trim() || '#30363d';
+                const textSecondaryColor = style.getPropertyValue('--text-secondary').trim() || '#8b949e';
+
+                new Chart(ctx, {
+                    type: 'line', // Loại biểu đồ
+                    data: {
+                        labels: labels, // Nhãn trục X
+                        datasets: [{
+                            label: 'Views', // Chú thích (có thể ẩn)
+                            data: viewsData, // Dữ liệu trục Y
+                            borderColor: accentColor, // Màu đường line
+                            backgroundColor: `${accentColor}33`, // Màu nền dưới line (thêm alpha)
+                            fill: true, // Tô màu nền dưới line
+                            tension: 0.4, // Độ cong của đường line
+                            pointBackgroundColor: accentColor, // Màu điểm chấm
+                            pointRadius: 3, // Bán kính điểm chấm
+                            pointHoverRadius: 5, // Bán kính khi hover
+                        }]
+                    },
+                    options: {
+                        responsive: true, // Tự điều chỉnh kích thước
+                        maintainAspectRatio: false, // Cho phép thay đổi tỷ lệ khi resize
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false // Ẩn lưới trục X
+                                },
+                                ticks: {
+                                    color: textSecondaryColor, // Màu chữ trục X
+                                    maxRotation: 0, // Không xoay chữ
+                                    autoSkip: true, // Tự động bỏ qua nhãn nếu quá dày
+                                    maxTicksLimit: 10 // Giới hạn số lượng nhãn hiển thị
+                                }
+                            },
+                            y: {
+                                beginAtZero: true, // Bắt đầu trục Y từ 0
+                                grid: {
+                                    color: borderColor, // Màu lưới trục Y
+                                    drawBorder: false, // Không vẽ đường viền trục Y
+                                },
+                                ticks: {
+                                    color: textSecondaryColor // Màu chữ trục Y
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false // Ẩn chú thích mặc định
+                            },
+                            tooltip: {
+                                enabled: true, // Bật tooltip
+                                mode: 'index', // Hiển thị tooltip cho tất cả dataset tại điểm index
+                                intersect: false, // Hiển thị tooltip khi hover gần điểm
+                                // Sử dụng external tooltip để tùy chỉnh hoàn toàn bằng CSS nếu cần,
+                                // nhưng tùy chỉnh cơ bản này cũng khá ổn
+                                backgroundColor: 'rgba(13, 17, 23, 0.9)', // Nền tooltip
+                                titleColor: '#e6edf3', // Màu tiêu đề tooltip
+                                bodyColor: '#e6edf3', // Màu nội dung tooltip
+                                borderColor: borderColor, // Viền tooltip
+                                borderWidth: 1,
+                                padding: 10,
+                                displayColors: false, // Không hiển thị hộp màu trong tooltip
+                                callbacks: {
+                                     label: function(context) {
+                                         let label = context.dataset.label || '';
+                                         if (label) {
+                                             label += ': ';
+                                         }
+                                         if (context.parsed.y !== null) {
+                                             // Định dạng số nếu cần (ví dụ: thêm dấu phẩy)
+                                             label += context.parsed.y.toLocaleString();
+                                         }
+                                         return label;
+                                     }
+                                }
+                            }
+                        },
+                        interaction: {
+                            mode: 'nearest', // Chế độ tương tác khi hover
+                            axis: 'x',
+                            intersect: false
+                        }
+                    }
+                });
+            } else {
+                console.error("Canvas element with ID 'viewStatsChart' not found.");
+            }
+        });
+    </script>
 </body>
 </html>

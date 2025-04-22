@@ -7,8 +7,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <!-- Include Chart.js or other charting library if needed -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+    <style>
+        /* Đảm bảo chart container có chiều cao và vị trí tương đối */
+        .chart-container {
+            height: 300px; /* Hoặc chiều cao phù hợp */
+            position: relative;
+            background-color: transparent; /* Bỏ background nếu có */
+            width: 100%; /* Đảm bảo chiếm hết chiều rộng widget */
+        }
+         /* Tùy chỉnh màu tooltip cho phù hợp theme */
+        .chartjs-tooltip {
+            background: rgba(13, 17, 23, 0.9) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: var(--border-radius-sm) !important;
+            color: var(--text-primary) !important;
+            padding: 8px 10px !important;
+        }
+        .chartjs-tooltip-caret { display: none !important; }
+        .chartjs-tooltip-title { margin-bottom: 5px !important; font-weight: 600 !important; }
+        .chartjs-tooltip-body { font-size: 13px !important; }
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -38,7 +56,6 @@
             <main class="page-content">
                 <div class="date-range-controls">
                     <label for="date-range">Date Range:</label>
-                    <!-- Replace with actual date picker component -->
                     <button class="button button-secondary">Last 7 days</button>
                     <button class="button button-secondary">Last 30 days</button>
                     <button class="button button-secondary">Custom Range <i class="fas fa-calendar-alt fa-xs"></i></button>
@@ -74,7 +91,12 @@
                         <h3 class="widget-title">Views Over Time</h3>
                         <div class="widget-actions"><i class="fas fa-ellipsis-h"></i></div>
                     </div>
-                    <div class="widget-content"><div class="chart-container"><p>Line Chart: Views per day/week</p></div></div>
+                    <div class="widget-content">
+                        <div class="chart-container">
+                             <!-- Thay thế <p> bằng <canvas> -->
+                             <canvas id="viewsOverTimeChart"></canvas>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="dashboard-grid" style="margin-top: 24px;">
@@ -83,14 +105,24 @@
                             <h3 class="widget-title">Traffic Sources</h3>
                             <div class="widget-actions"><i class="fas fa-ellipsis-h"></i></div>
                         </div>
-                         <div class="widget-content"><div class="chart-container"><p>Pie/Donut Chart: External, Search, Direct, etc.</p></div></div>
+                         <div class="widget-content">
+                             <div class="chart-container">
+                                 <!-- Thay thế <p> bằng <canvas> -->
+                                 <canvas id="trafficSourcesChart"></canvas>
+                             </div>
+                         </div>
                     </div>
                      <div class="widget">
                         <div class="widget-header">
                             <h3 class="widget-title">Audience Demographics</h3>
                             <div class="widget-actions"><i class="fas fa-ellipsis-h"></i></div>
                         </div>
-                         <div class="widget-content"><div class="chart-container"><p>Bar Chart: Age, Gender, Location</p></div></div>
+                         <div class="widget-content">
+                             <div class="chart-container">
+                                 <!-- Thay thế <p> bằng <canvas> -->
+                                 <canvas id="audienceDemographicsChart"></canvas>
+                             </div>
+                         </div>
                     </div>
                 </div>
 
@@ -101,7 +133,7 @@
                          <div class="widget-actions"><i class="fas fa-sort-amount-down"></i></div> <!-- Sort icon -->
                      </div>
                      <div class="widget-content">
-                         <div class="user-table-container"> <!-- Reuse table styles -->
+                         <div class="user-table-container">
                              <table class="user-table">
                                  <thead>
                                      <tr>
@@ -143,6 +175,177 @@
             </main>
         </div>
     </div>
-    <!-- <script> // Add JS for charts here </script> -->
+
+    <!-- Bỏ comment dòng này để thêm Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Helper function to get CSS variable ---
+            const style = getComputedStyle(document.documentElement);
+            const getCssVar = (varName) => style.getPropertyValue(varName).trim() || undefined;
+
+            // --- Colors from CSS Variables ---
+            const accentColor = getCssVar('--accent-color') || '#58a6ff';
+            const accentAltColor = getCssVar('--accent-alt') || '#3fb950';
+            const warningColor = getCssVar('--warning-color') || '#e3b341';
+            const purpleColor = getCssVar('--purple-accent') || '#a371f7';
+            const secondaryColor = getCssVar('--text-secondary') || '#8b949e';
+            const borderColor = getCssVar('--border-color') || '#30363d';
+
+            // --- Default Chart Options ---
+            const defaultChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: secondaryColor },
+                        position: 'bottom',
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(13, 17, 23, 0.9)',
+                        titleColor: '#e6edf3',
+                        bodyColor: '#e6edf3',
+                        borderColor: borderColor,
+                        borderWidth: 1,
+                        padding: 10,
+                        displayColors: false,
+                    }
+                },
+                 interaction: { mode: 'nearest', axis: 'x', intersect: false }
+            };
+
+             // --- 1. Views Over Time Chart (Line) ---
+            const ctxViews = document.getElementById('viewsOverTimeChart');
+            if (ctxViews) {
+                 ctxViews.getContext('2d');
+                 const viewsLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; // Example labels
+                 const viewsData = [5000, 7000, 6500, 8000, 9500, 11000, 10500, 12000, 13500, 14000, 15500, 16000]; // Example data
+
+                 new Chart(ctxViews, {
+                     type: 'line',
+                     data: {
+                         labels: viewsLabels,
+                         datasets: [{
+                             label: 'Views',
+                             data: viewsData,
+                             borderColor: accentColor,
+                             backgroundColor: `${accentColor}33`,
+                             fill: true,
+                             tension: 0.4,
+                             pointBackgroundColor: accentColor,
+                             pointRadius: 3,
+                             pointHoverRadius: 5,
+                         }]
+                     },
+                     options: {
+                         ...defaultChartOptions, // Use default options
+                         scales: {
+                            x: { grid: { display: false }, ticks: { color: secondaryColor, maxRotation: 0, autoSkip: true, maxTicksLimit: 12 } },
+                            y: { beginAtZero: true, grid: { color: borderColor, drawBorder: false }, ticks: { color: secondaryColor } }
+                        },
+                         plugins: { ...defaultChartOptions.plugins, legend: { display: false } } // Override legend display
+                     }
+                 });
+            } else { console.error("Canvas 'viewsOverTimeChart' not found."); }
+
+            // --- 2. Traffic Sources Chart (Doughnut) ---
+            const ctxTraffic = document.getElementById('trafficSourcesChart');
+            if (ctxTraffic) {
+                 ctxTraffic.getContext('2d');
+                 const trafficLabels = ['External', 'Search', 'Direct', 'Social', 'Other'];
+                 const trafficData = [45, 25, 15, 10, 5]; // Example data (percentages)
+
+                 new Chart(ctxTraffic, {
+                     type: 'doughnut',
+                     data: {
+                         labels: trafficLabels,
+                         datasets: [{
+                             label: 'Traffic Source',
+                             data: trafficData,
+                             backgroundColor: [
+                                 accentColor,
+                                 accentAltColor,
+                                 warningColor,
+                                 purpleColor,
+                                 secondaryColor + '80' // Add some transparency
+                             ],
+                             borderColor: getCssVar('--bg-secondary') || '#161b22', // Border same as widget bg for separation
+                             borderWidth: 2,
+                             hoverOffset: 4
+                         }]
+                     },
+                     options: {
+                         ...defaultChartOptions,
+                          cutout: '65%', // Make it a doughnut chart
+                          plugins: {
+                              ...defaultChartOptions.plugins,
+                              tooltip: {
+                                   ...defaultChartOptions.plugins.tooltip,
+                                   callbacks: { // Show label and percentage in tooltip
+                                       label: function(context) {
+                                            let label = context.label || '';
+                                            if (label) { label += ': '; }
+                                            if (context.parsed !== null) {
+                                                label += context.parsed + '%';
+                                            }
+                                            return label;
+                                       }
+                                   }
+                              }
+                          }
+                     }
+                 });
+            } else { console.error("Canvas 'trafficSourcesChart' not found."); }
+
+             // --- 3. Audience Demographics Chart (Bar) ---
+            const ctxAudience = document.getElementById('audienceDemographicsChart');
+            if (ctxAudience) {
+                 ctxAudience.getContext('2d');
+                 const audienceLabels = ['18-24', '25-34', '35-44', '45-54', '55-64', '65+'];
+                 const audienceData = [25, 35, 20, 10, 5, 5]; // Example data (percentages)
+
+                 new Chart(ctxAudience, {
+                     type: 'bar',
+                     data: {
+                         labels: audienceLabels,
+                         datasets: [{
+                             label: 'Audience Age',
+                             data: audienceData,
+                             backgroundColor: `${accentColor}b3`, // Semi-transparent accent
+                             borderColor: accentColor,
+                             borderWidth: 1,
+                             borderRadius: 4, // Rounded bars
+                             maxBarThickness: 40, // Limit bar width
+                         }]
+                     },
+                     options: {
+                         ...defaultChartOptions,
+                         scales: {
+                             x: { grid: { display: false }, ticks: { color: secondaryColor } },
+                             y: { beginAtZero: true, grid: { color: borderColor, drawBorder: false }, ticks: { color: secondaryColor, callback: function(value) { return value + '%'; } } } // Add % sign
+                         },
+                         plugins: {
+                             ...defaultChartOptions.plugins,
+                             legend: { display: false }, // Hide legend if only one dataset
+                             tooltip: {
+                                 ...defaultChartOptions.plugins.tooltip,
+                                 callbacks: { // Add % to tooltip
+                                     label: function(context) {
+                                         let label = context.dataset.label || '';
+                                         if (label) { label += ': '; }
+                                         if (context.parsed.y !== null) {
+                                             label += context.parsed.y + '%';
+                                         }
+                                         return label;
+                                     }
+                                 }
+                             }
+                         }
+                     }
+                 });
+            } else { console.error("Canvas 'audienceDemographicsChart' not found."); }
+
+        });
+    </script>
 </body>
 </html>
