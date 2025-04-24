@@ -1,132 +1,241 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Comments - Video Management</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <div class="app-container">
-            <!-- Sidebar -->
-            <aside class="sidebar">
-                <div class="sidebar-logo"><i class="fas fa-video"></i><span>VidManage</span></div>
-            <ul class="sidebar-nav">
-                <li><a href="dashboard.html"><i class="fas fa-tachometer-alt fa-fw"></i> Dashboard</a></li>
-                <li><a href="videos.html"><i class="fas fa-film fa-fw"></i> Videos</a></li>
-                <li><a href="upload.html"><i class="fas fa-upload fa-fw"></i> Upload</a></li>
-                <li><a href="analytics.html"><i class="fas fa-chart-bar fa-fw"></i> Analytics</a></li>
-                <li><a href="comments.html" class="active"><i class="fas fa-comments fa-fw"></i> Comments</a></li>
-                <li><a href="users.html"><i class="fas fa-users-cog fa-fw"></i> User Roles</a></li>
-                <li><a href="settings.html"><i class="fas fa-cog fa-fw"></i> Settings</a></li>
-            </ul>
-        </aside>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comments - Video Management</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind Custom Configuration -->
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {}
+        }
+      }
+    </script>
+    <style>
+        /* Global dark theme styles */
+        html, body {
+            background-color: #111827; /* bg-gray-900 */
+            color: #d1d5db; /* text-gray-300 */
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+        /* Dark theme select arrows */
+        select, input[type="text"], input[type="search"] { /* Thêm input */
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            appearance: none; /* Bỏ giao diện mặc định */
+        }
+         input[type="text"], input[type="search"] { /* Bỏ mũi tên cho input text/search */
+             background-image: none;
+             padding-right: 0.75rem; /* reset padding */
+         }
+         input[type="checkbox"] {
+             accent-color: #3b82f6; /* Tailwind blue-500 */
+         }
 
-            <!-- Main Content -->
-            <div class="main-container">
-                <header class="main-header">
-                    <h1 class="header-title">Manage Comments</h1>
-                    <div class="header-actions">
-                        <div class="user-profile"> <img src="https://placehold.co/40x40/8b949e/e6edf3?text=JD" alt="User Avatar"><span>John Doe</span><i class="fas fa-chevron-down fa-xs"></i></div>
-                    </div>
-                </header>
+        /* Thêm style cho các nút Approve/Spam/Delete đặc biệt */
+         .button-approve-tw {
+             background-color: rgba(34, 197, 94, 0.1); /* Tailwind green-500/10 */
+             color: #22c55e; /* Tailwind green-500 */
+             border: 1px solid rgba(34, 197, 94, 0.3); /* Green-500/30 */
+         }
+         .button-approve-tw:hover { background-color: rgba(34, 197, 94, 0.2); }
 
-                <main class="page-content">
-                    <div class="comment-filters">
-                        <select>
-                            <option value="all">All Videos</option>
-                            <option value="video1">Introduction to AI...</option>
-                            <option value="video2">Advanced CSS Grid...</option>
-                        </select>
-                        <select>
-                            <option value="published">Published Comments</option>
-                            <option value="pending">Held for Review</option>
-                            <option value="spam">Likely Spam</option>
-                        </select>
-                        <input type="text" placeholder="Search comments...">
-                        <button class="button button-secondary"><i class="fas fa-search"></i> Search</button>
-                    </div>
+         .button-spam-tw {
+             background-color: rgba(234, 179, 8, 0.1); /* Tailwind yellow-500/10 */
+             color: #eab308; /* Tailwind yellow-500 */
+             border: 1px solid rgba(234, 179, 8, 0.3); /* Yellow-500/30 */
+         }
+         .button-spam-tw:hover { background-color: rgba(234, 179, 8, 0.2); }
 
-                    <div class="bulk-actions">
-                        <!-- Add Bulk action buttons (Approve All, Delete Selected etc.) -->
-                        <button class="button button-secondary button-approve"><i class="fas fa-check"></i> Approve Selected</button>
-                        <button class="button button-secondary button-spam"><i class="fas fa-shield-virus"></i> Mark as Spam</button>
-                        <button class="button button-secondary button-danger"><i class="fas fa-trash"></i> Delete Selected</button>
-                    </div>
+         .button-danger-tw {
+             background-color: rgba(239, 68, 68, 0.1); /* Tailwind red-500/10 */
+             color: #ef4444; /* Tailwind red-500 */
+             border: 1px solid rgba(239, 68, 68, 0.3); /* Red-500/30 */
+         }
+         .button-danger-tw:hover { background-color: rgba(239, 68, 68, 0.2); }
 
-                    <div class="comment-management-list">
-                        <!-- Comment Item 1 -->
-                        <div class="comment-management-item">
-                            <div class="comment-select-checkbox">
-                                <input type="checkbox">
-                            </div>
-                            <div class="comment-item-main">
-                                <img src="https://placehold.co/36x36/79c0ff/0d1117?text=AS" alt="Avatar" style="border-radius: 50%; width: 36px; height: 36px; flex-shrink: 0;">
-                                <div class="comment-item-details">
-                                    <div><span class="comment-author">Alice Smith</span><span class="comment-time">1 day ago</span></div>
-                                    <p class="comment-text">Great introduction! Really cleared up some concepts for me. Looking forward to more advanced topics.</p>
-                                    <div class="comment-item-video-context">
-                                        <img src="https://placehold.co/80x45/161b22/e6edf3?text=Video+1" alt="Video">
-                                        <span>On:</span> <a href="video-detail.html">Introduction to AI Development</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="comment-item-actions">
-                                <button class="button button-approve"><i class="fas fa-check"></i> Approve</button>
-                                <button class="button button-danger"><i class="fas fa-trash"></i> Delete</button>
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300">
+
+    <div class="min-h-screen flex flex-col">
+
+        <!-- Top Navigation (Giống dashboard) -->
+        <nav class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
+            <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 flex items-center text-white mr-6">
+                            <i class="fas fa-video text-blue-400 mr-2 text-xl"></i>
+                            <span class="font-bold text-lg">SysDash Comments</span> <!-- Đổi tên -->
+                        </div>
+                        <div class="hidden md:block">
+                            <div class="ml-10 flex items-baseline space-x-4">
+                                <a href="dashboard.html" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium" aria-current="page">Dashboard</a>
+                                <a href="camera-map.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Camera Map</a>
+                                <a href="camera-monitoring.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Camera</a>
+                                <a href="analytics.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Analysis</a>
+                                <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Comments</a>
+                                <a href="summary.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Summary</a>
+                                <a href="settings.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Settings</a>
                             </div>
                         </div>
-                        <!-- Comment Item 2 (Pending) -->
-                        <div class="comment-management-item">
-                            <div class="comment-select-checkbox"><input type="checkbox"></div>
-                            <div class="comment-item-main">
-                                <img src="https://placehold.co/36x36/a371f7/0d1117?text=BM" alt="Avatar" style="border-radius: 50%; width: 36px; height: 36px; flex-shrink: 0;">
-                                <div class="comment-item-details">
-                                    <div><span class="comment-author">Bob Miller</span><span class="comment-time">2 days ago</span></div>
-                                    <p class="comment-text">Check out this amazing offer!!! www.example-spam-link.com</p>
-                                    <div class="comment-item-video-context">
-                                        <img src="https://placehold.co/80x45/161b22/e6edf3?text=Video+2" alt="Video">
-                                        <span>On:</span> <a href="#">Advanced CSS Grid Techniques</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="comment-item-actions">
-                                <button class="button button-approve"><i class="fas fa-check"></i> Approve</button>
-                                <button class="button button-spam"><i class="fas fa-shield-virus"></i> Spam</button>
-                                <button class="button button-danger"><i class="fas fa-trash"></i> Delete</button>
-                            </div>
-                        </div>
-                        <!-- Comment Item 3 -->
-                        <div class="comment-management-item">
-                            <div class="comment-select-checkbox"><input type="checkbox"></div>
-                            <div class="comment-item-main">
-                                <img src="https://placehold.co/36x36/3fb950/0d1117?text=CG" alt="Avatar" style="border-radius: 50%; width: 36px; height: 36px; flex-shrink: 0;">
-                                <div class="comment-item-details">
-                                    <div><span class="comment-author">Charlie Green</span><span class="comment-time">3 days ago</span></div>
-                                    <p class="comment-text">Very helpful, thank you!</p>
-                                    <div class="comment-item-video-context">
-                                        <img src="https://placehold.co/80x45/161b22/e6edf3?text=Video+1" alt="Video">
-                                        <span>On:</span> <a href="video-detail.html">Introduction to AI Development</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="comment-item-actions">
-                                <button class="button button-danger"><i class="fas fa-trash"></i> Delete</button>
-                            </div>
-                        </div>
-                        <!-- More comments -->
                     </div>
-
-                    <!-- Pagination -->
-                    <div style="text-align: center; margin-top: 30px;">
-                        <button class="button button-secondary">« Prev</button>
-                        <span style="margin: 0 15px; color: var(--text-secondary);">Page 1 of 5</span>
-                        <button class="button button-secondary">Next »</button>
-                    </div>
-                </main>
+                    <div class="hidden md:block"> <div class="ml-4 flex items-center md:ml-6"> ... (Profile dropdown etc.) ... </div> </div>
+                    <div class="-mr-2 flex md:hidden"> <button> ... (Mobile menu button) ... </button> </div>
+                </div>
             </div>
-        </div>
-    </body>
-    </html>
+             <!-- Mobile menu (Giống dashboard) -->
+            <div class="md:hidden hidden" id="mobile-menu"> ... </div>
+        </nav>
+
+        <!-- Main Content Area (Nội dung từ comments.html cũ) -->
+        <main class="p-4 sm:p-6 flex-grow">
+
+            <!-- Filters -->
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+                <select class="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2">
+                    <option value="all">All Videos</option>
+                    <option value="video1">Introduction to AI...</option>
+                    <option value="video2">Advanced CSS Grid...</option>
+                </select>
+                <select class="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2">
+                    <option value="published">Published Comments</option>
+                    <option value="pending">Held for Review</option>
+                    <option value="spam">Likely Spam</option>
+                </select>
+                <div class="relative flex-grow sm:flex-grow-0"> <!-- Cho phép input co giãn -->
+                     <input type="search" class="bg-gray-700 border border-gray-600 text-gray-300 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2 pl-10" placeholder="Search comments...">
+                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400"></i>
+                    </div>
+                </div>
+                 <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-md inline-flex items-center gap-2">
+                     <i class="fas fa-filter fa-xs"></i> Filter
+                 </button>
+            </div>
+
+            <!-- Bulk Actions -->
+            <div class="mb-4 pb-4 border-b border-gray-700 flex flex-wrap items-center gap-2">
+                <label class="flex items-center mr-4">
+                    <input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2">
+                    <span class="ml-2 text-sm text-gray-400">Select All</span>
+                </label>
+                 <button class="text-xs font-medium px-3 py-1.5 rounded-md inline-flex items-center gap-1.5 button-approve-tw">
+                     <i class="fas fa-check"></i> Approve
+                 </button>
+                 <button class="text-xs font-medium px-3 py-1.5 rounded-md inline-flex items-center gap-1.5 button-spam-tw">
+                     <i class="fas fa-shield-virus"></i> Mark as Spam
+                 </button>
+                 <button class="text-xs font-medium px-3 py-1.5 rounded-md inline-flex items-center gap-1.5 button-danger-tw">
+                     <i class="fas fa-trash"></i> Delete
+                 </button>
+            </div>
+
+            <!-- Comment List -->
+            <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                <div class="divide-y divide-gray-700">
+                    <!-- Comment Item 1 -->
+                    <div class="p-4 flex gap-4 hover:bg-gray-700/50">
+                        <div class="flex-shrink-0 pt-1">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-offset-gray-800 focus:ring-2">
+                        </div>
+                        <div class="flex-shrink-0">
+                             <img src="https://placehold.co/36x36/79c0ff/0d1117?text=AS" alt="Avatar" class="w-9 h-9 rounded-full">
+                        </div>
+                        <div class="flex-grow min-w-0"> <!-- Ngăn text đẩy nút -->
+                            <div class="flex flex-wrap items-baseline gap-x-2 mb-1">
+                                <span class="font-semibold text-sm text-white">Alice Smith</span>
+                                <span class="text-xs text-gray-400">1 day ago</span>
+                            </div>
+                            <p class="text-sm text-gray-300 mb-2">Great introduction! Really cleared up some concepts for me. Looking forward to more advanced topics.</p>
+                            <div class="flex items-center gap-2 text-xs text-gray-500 bg-gray-700 px-2 py-1 rounded-md inline-flex">
+                                <img src="https://placehold.co/40x22/111827/6b7280?text=V1" alt="Video" class="w-10 h-auto rounded-sm">
+                                <span>On:</span> <a href="video-detail.html" class="hover:text-blue-400 truncate max-w-[200px] sm:max-w-[300px]">Introduction to AI Development</a>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0 flex flex-col sm:flex-row items-end sm:items-start gap-2 ml-auto">
+                              <!-- Điều chỉnh nút với Tailwind -->
+                              <button class="text-xs font-medium px-2.5 py-1 rounded-md inline-flex items-center gap-1 button-approve-tw">
+                                  <i class="fas fa-check fa-xs"></i> <span class="hidden sm:inline">Approve</span>
+                              </button>
+                              <button class="text-xs font-medium px-2.5 py-1 rounded-md inline-flex items-center gap-1 button-danger-tw">
+                                  <i class="fas fa-trash fa-xs"></i> <span class="hidden sm:inline">Delete</span>
+                              </button>
+                         </div>
+                    </div>
+                    <!-- Comment Item 2 (Pending/Spam Example) -->
+                     <div class="p-4 flex gap-4 hover:bg-gray-700/50 bg-yellow-900/20"> <!-- Nền khác cho pending/spam -->
+                        <div class="flex-shrink-0 pt-1"><input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-offset-gray-800 focus:ring-2"></div>
+                        <div class="flex-shrink-0"><img src="https://placehold.co/36x36/a371f7/0d1117?text=BM" alt="Avatar" class="w-9 h-9 rounded-full"></div>
+                        <div class="flex-grow min-w-0">
+                             <div class="flex flex-wrap items-baseline gap-x-2 mb-1">
+                                <span class="font-semibold text-sm text-white">Bob Miller</span>
+                                <span class="text-xs text-gray-400">2 days ago</span>
+                                <span class="text-xs font-medium text-yellow-400 bg-yellow-900/50 px-1.5 py-0.5 rounded">Held for Review</span>
+                             </div>
+                            <p class="text-sm text-gray-300 mb-2">Check out this amazing offer!!! www.example-spam-link.com</p>
+                             <div class="flex items-center gap-2 text-xs text-gray-500 bg-gray-700 px-2 py-1 rounded-md inline-flex">
+                                <img src="https://placehold.co/40x22/111827/6b7280?text=V2" alt="Video" class="w-10 h-auto rounded-sm">
+                                <span>On:</span> <a href="#" class="hover:text-blue-400 truncate max-w-[200px] sm:max-w-[300px]">Advanced CSS Grid Techniques</a>
+                             </div>
+                        </div>
+                         <div class="flex-shrink-0 flex flex-col sm:flex-row items-end sm:items-start gap-2 ml-auto">
+                              <button class="text-xs font-medium px-2.5 py-1 rounded-md inline-flex items-center gap-1 button-approve-tw">
+                                  <i class="fas fa-check fa-xs"></i> <span class="hidden sm:inline">Approve</span>
+                              </button>
+                              <button class="text-xs font-medium px-2.5 py-1 rounded-md inline-flex items-center gap-1 button-spam-tw">
+                                   <i class="fas fa-shield-virus fa-xs"></i> <span class="hidden sm:inline">Spam</span>
+                              </button>
+                              <button class="text-xs font-medium px-2.5 py-1 rounded-md inline-flex items-center gap-1 button-danger-tw">
+                                   <i class="fas fa-trash fa-xs"></i> <span class="hidden sm:inline">Delete</span>
+                               </button>
+                         </div>
+                    </div>
+                      <!-- Comment Item 3 -->
+                     <div class="p-4 flex gap-4 hover:bg-gray-700/50">
+                         <div class="flex-shrink-0 pt-1"><input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-offset-gray-800 focus:ring-2"></div>
+                         <div class="flex-shrink-0"><img src="https://placehold.co/36x36/3fb950/0d1117?text=CG" alt="Avatar" class="w-9 h-9 rounded-full"></div>
+                         <div class="flex-grow min-w-0">
+                            <div class="flex flex-wrap items-baseline gap-x-2 mb-1">
+                                <span class="font-semibold text-sm text-white">Charlie Green</span>
+                                <span class="text-xs text-gray-400">3 days ago</span>
+                            </div>
+                             <p class="text-sm text-gray-300 mb-2">Very helpful, thank you!</p>
+                              <div class="flex items-center gap-2 text-xs text-gray-500 bg-gray-700 px-2 py-1 rounded-md inline-flex">
+                                <img src="https://placehold.co/40x22/111827/6b7280?text=V1" alt="Video" class="w-10 h-auto rounded-sm">
+                                <span>On:</span> <a href="video-detail.html" class="hover:text-blue-400 truncate max-w-[200px] sm:max-w-[300px]">Introduction to AI Development</a>
+                             </div>
+                         </div>
+                         <div class="flex-shrink-0 flex flex-col sm:flex-row items-end sm:items-start gap-2 ml-auto">
+                             <button class="text-xs font-medium px-2.5 py-1 rounded-md inline-flex items-center gap-1 button-danger-tw">
+                                  <i class="fas fa-trash fa-xs"></i> <span class="hidden sm:inline">Delete</span>
+                             </button>
+                         </div>
+                     </div>
+                    <!-- More comments... -->
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-center items-center mt-6 space-x-2">
+                <button class="bg-gray-700 hover:bg-gray-600 text-gray-300 px-3 py-1.5 rounded-md text-xs font-medium disabled:opacity-50" disabled>« Prev</button>
+                <span class="text-sm text-gray-400">Page 1 of 5</span>
+                <button class="bg-gray-700 hover:bg-gray-600 text-gray-300 px-3 py-1.5 rounded-md text-xs font-medium">Next »</button>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

@@ -4,346 +4,444 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics - Video Management</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN (v3.9.1 để khớp code JS bạn đã cung cấp) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <!-- Font Awesome (Nếu vẫn cần cho icon) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <!-- Tailwind Custom Configuration -->
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {}
+        }
+      }
+    </script>
     <style>
-        /* Đảm bảo chart container có chiều cao và vị trí tương đối */
+        /* Global dark theme styles */
+        html, body {
+            background-color: #111827; /* bg-gray-900 */
+            color: #d1d5db; /* text-gray-300 */
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+        /* Dark theme select arrows */
+        select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        /* Chart container height */
         .chart-container {
             height: 300px; /* Hoặc chiều cao phù hợp */
             position: relative;
-            background-color: transparent; /* Bỏ background nếu có */
-            width: 100%; /* Đảm bảo chiếm hết chiều rộng widget */
+            width: 100%;
         }
-         /* Tùy chỉnh màu tooltip cho phù hợp theme */
+        /* Chart.js Tooltip custom style */
         .chartjs-tooltip {
-            background: rgba(13, 17, 23, 0.9) !important;
-            border: 1px solid var(--border-color) !important;
-            border-radius: var(--border-radius-sm) !important;
-            color: var(--text-primary) !important;
-            padding: 8px 10px !important;
+            background: rgba(17, 24, 39, 0.9) !important; /* bg-gray-900 with opacity */
+            border: 1px solid #374151 !important; /* border-gray-700 */
+            border-radius: 0.375rem !important; /* rounded-md */
+            color: #d1d5db !important; /* text-gray-300 */
+            padding: 0.5rem 0.75rem !important; /* p-2 px-3 */
+            font-size: 0.875rem !important; /* text-sm */
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* shadow-lg */
         }
         .chartjs-tooltip-caret { display: none !important; }
-        .chartjs-tooltip-title { margin-bottom: 5px !important; font-weight: 600 !important; }
-        .chartjs-tooltip-body { font-size: 13px !important; }
+        .chartjs-tooltip-title { margin-bottom: 0.25rem !important; font-weight: 600 !important; color: #f9fafb !important; }
+        .chartjs-tooltip-body {}
     </style>
 </head>
-<body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-             <div class="sidebar-logo"><i class="fas fa-video"></i><span>VidManage</span></div>
-            <ul class="sidebar-nav">
-                <li><a href="dashboard.html"><i class="fas fa-tachometer-alt fa-fw"></i> Dashboard</a></li>
-                <li><a href="videos.html"><i class="fas fa-film fa-fw"></i> Videos</a></li>
-                <li><a href="upload.html"><i class="fas fa-upload fa-fw"></i> Upload</a></li>
-                <li><a href="analytics.html" class="active"><i class="fas fa-chart-bar fa-fw"></i> Analytics</a></li>
-                <li><a href="comments.html"><i class="fas fa-comments fa-fw"></i> Comments</a></li>
-                <li><a href="users.html"><i class="fas fa-users-cog fa-fw"></i> User Roles</a></li>
-                <li><a href="settings.html"><i class="fas fa-cog fa-fw"></i> Settings</a></li>
-            </ul>
-        </aside>
+<body class="bg-gray-900 text-gray-300">
 
-        <!-- Main Content -->
-        <div class="main-container">
-            <header class="main-header">
-                <h1 class="header-title">Analytics</h1>
-                <div class="header-actions">
-                     <div class="user-profile"> <img src="https://placehold.co/40x40/8b949e/e6edf3?text=JD" alt="User Avatar"><span>John Doe</span><i class="fas fa-chevron-down fa-xs"></i></div>
-                </div>
-            </header>
+    <!-- Container chính -->
+    <div class="min-h-screen flex flex-col"> <!-- Sử dụng flex-col để header ở trên -->
 
-            <main class="page-content">
-                <div class="date-range-controls">
-                    <label for="date-range">Date Range:</label>
-                    <button class="button button-secondary">Last 7 days</button>
-                    <button class="button button-secondary">Last 30 days</button>
-                    <button class="button button-secondary">Custom Range <i class="fas fa-calendar-alt fa-xs"></i></button>
-                </div>
-
-                <!-- Overview Stats -->
-                <div class="dashboard-grid">
-                     <div class="stat-card">
-                        <div class="stat-card-header"><span class="stat-card-title">Watch time (hours)</span><i class="far fa-clock stat-card-icon"></i></div>
-                        <div class="stat-card-value">4.5K</div>
-                        <div class="stat-card-change positive"><i class="fas fa-arrow-up fa-xs"></i> 15.2%</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-card-header"><span class="stat-card-title">Views</span><i class="fas fa-eye stat-card-icon"></i></div>
-                        <div class="stat-card-value">180.7K</div>
-                        <div class="stat-card-change positive"><i class="fas fa-arrow-up fa-xs"></i> 11.8%</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-card-header"><span class="stat-card-title">Avg. View Duration</span><i class="fas fa-stopwatch stat-card-icon" style="color: var(--warning-color);"></i></div>
-                        <div class="stat-card-value">3:45</div>
-                         <div class="stat-card-change negative"><i class="fas fa-arrow-down fa-xs"></i> -5.1%</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-card-header"><span class="stat-card-title">Subscribers</span><i class="fas fa-users stat-card-icon" style="color: var(--accent-alt);"></i></div>
-                        <div class="stat-card-value">+1,230</div>
-                         <div class="stat-card-change">vs. previous period</div>
-                    </div>
-                </div>
-
-                <!-- Main Charts -->
-                 <div class="widget" style="margin-top: 24px;">
-                    <div class="widget-header">
-                        <h3 class="widget-title">Views Over Time</h3>
-                        <div class="widget-actions"><i class="fas fa-ellipsis-h"></i></div>
-                    </div>
-                    <div class="widget-content">
-                        <div class="chart-container">
-                             <!-- Thay thế <p> bằng <canvas> -->
-                             <canvas id="viewsOverTimeChart"></canvas>
+        <!-- Top Navigation (Giữ nguyên từ dashboard mới) -->
+        <nav class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50"> <!-- Thêm sticky và z-index -->
+            <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <!-- Logo -->
+                        <div class="flex-shrink-0 flex items-center text-white mr-6">
+                            <i class="fas fa-video text-blue-400 mr-2 text-xl"></i>
+                            <span class="font-bold text-lg">SysDash Analytics</span> <!-- Đổi tên -->
+                        </div>
+                        <!-- Nav Links (Ẩn trên mobile) -->
+                        <div class="hidden md:block">
+                            <div class="ml-10 flex items-baseline space-x-4">
+                                <a href="dashboard.html" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium" aria-current="page">Dashboard</a>
+                                <a href="camera-map.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Camera Map</a>
+                                <a href="camera-monitoring.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Camera</a>
+                                <a href="analytics.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Analysis</a>
+                                <a href="comments.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Comments</a>
+                                <a href="summary.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Summary</a>
+                                <a href="settings.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Settings</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="dashboard-grid" style="margin-top: 24px;">
-                     <div class="widget">
-                        <div class="widget-header">
-                            <h3 class="widget-title">Traffic Sources</h3>
-                            <div class="widget-actions"><i class="fas fa-ellipsis-h"></i></div>
+                    <div class="hidden md:block">
+                        <div class="ml-4 flex items-center md:ml-6">
+                            <button type="button" class="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                                <span class="sr-only">View notifications</span>
+                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341A6.002 6.002 0 006 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                            </button>
+                            <!-- Profile dropdown -->
+                            <div class="ml-3 relative">
+                                <div> <button type="button" class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" id="user-menu-button" aria-expanded="false" aria-haspopup="true"> <span class="sr-only">Open user menu</span> <img class="h-8 w-8 rounded-full" src="https://placehold.co/40x40/8b949e/e6edf3?text=JD" alt=""> </button> </div>
+                                <!-- Dropdown menu (có thể thêm sau) -->
+                            </div>
                         </div>
-                         <div class="widget-content">
-                             <div class="chart-container">
-                                 <!-- Thay thế <p> bằng <canvas> -->
-                                 <canvas id="trafficSourcesChart"></canvas>
-                             </div>
-                         </div>
                     </div>
-                     <div class="widget">
-                        <div class="widget-header">
-                            <h3 class="widget-title">Audience Demographics</h3>
-                            <div class="widget-actions"><i class="fas fa-ellipsis-h"></i></div>
-                        </div>
-                         <div class="widget-content">
-                             <div class="chart-container">
-                                 <!-- Thay thế <p> bằng <canvas> -->
-                                 <canvas id="audienceDemographicsChart"></canvas>
-                             </div>
-                         </div>
+                     <!-- Mobile menu button -->
+                    <div class="-mr-2 flex md:hidden">
+                        <button type="button" class="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+                            <span class="sr-only">Open main menu</span>
+                            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /> </svg>
+                            <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /> </svg>
+                        </button>
                     </div>
                 </div>
-
-                <!-- Top Videos -->
-                 <div class="widget" style="margin-top: 24px;">
-                     <div class="widget-header">
-                         <h3 class="widget-title">Top Videos (Last 30 days)</h3>
-                         <div class="widget-actions"><i class="fas fa-sort-amount-down"></i></div> <!-- Sort icon -->
-                     </div>
-                     <div class="widget-content">
-                         <div class="user-table-container">
-                             <table class="user-table">
-                                 <thead>
-                                     <tr>
-                                         <th>Video</th>
-                                         <th>Views</th>
-                                         <th>Watch Time (Hours)</th>
-                                         <th>Avg. Duration</th>
-                                         <th>Likes</th>
-                                     </tr>
-                                 </thead>
-                                 <tbody>
-                                     <tr>
-                                         <td>Advanced CSS Grid Techniques</td>
-                                         <td>5.8K</td>
-                                         <td>150.5</td>
-                                         <td>4:15</td>
-                                         <td>620</td>
-                                     </tr>
-                                      <tr>
-                                         <td>Cooking Pasta Like a Pro</td>
-                                         <td>10.2K</td>
-                                         <td>310.0</td>
-                                         <td>5:30</td>
-                                         <td>1.1K</td>
-                                     </tr>
-                                      <tr>
-                                         <td>Introduction to AI Development</td>
-                                         <td>1.2K</td>
-                                         <td>35.2</td>
-                                         <td>3:10</td>
-                                         <td>150</td>
-                                     </tr>
-                                      <!-- More rows -->
-                                 </tbody>
-                             </table>
-                         </div>
+            </div>
+             <!-- Mobile menu, show/hide based on menu state. -->
+            <div class="md:hidden" id="mobile-menu">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                     <a href="dashboard.html" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                     <a href="analytics.html" class="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium" aria-current="page">Analytics</a>
+                     <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Summary</a>
+                     <a href="settings.html" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Settings</a>
+                </div>
+                 <div class="pt-4 pb-3 border-t border-gray-700">
+                     <div class="flex items-center px-5">
+                         <div class="flex-shrink-0"> <img class="h-10 w-10 rounded-full" src="https://placehold.co/40x40/8b949e/e6edf3?text=JD" alt=""> </div>
+                         <div class="ml-3"> <div class="text-base font-medium leading-none text-white">John Doe</div> <div class="text-sm font-medium leading-none text-gray-400">john.doe@example.com</div> </div>
+                         <button type="button" class="ml-auto bg-gray-800 flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"> <span class="sr-only">View notifications</span> <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341A6.002 6.002 0 006 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /> </svg> </button>
                      </div>
                  </div>
-            </main>
-        </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area (Nội dung từ analytics.html cũ) -->
+        <main class="p-4 sm:p-6 flex-grow"> <!-- Thêm flex-grow để chiếm không gian -->
+
+            <!-- Date Range Controls -->
+            <div class="flex flex-wrap items-center gap-2 mb-6"> <!-- Thêm flex-wrap và gap -->
+                <label for="date-range" class="text-sm text-gray-400">Date Range:</label>
+                <!-- Thay thế bằng component date picker thực tế nếu cần -->
+                <button class="bg-gray-700 hover:bg-gray-600 text-gray-300 px-3 py-1.5 rounded-md text-xs font-medium">Last 7 days</button>
+                <button class="bg-gray-700 hover:bg-gray-600 text-gray-300 px-3 py-1.5 rounded-md text-xs font-medium">Last 30 days</button>
+                <button class="bg-gray-700 hover:bg-gray-600 text-gray-300 px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1">
+                    Custom Range <i class="fas fa-calendar-alt fa-xs"></i>
+                </button>
+            </div>
+
+            <!-- Overview Stats -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                 <div class="bg-gray-800 rounded-lg p-4 shadow-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-400">Watch time (hours)</span>
+                        <i class="far fa-clock text-gray-500"></i>
+                    </div>
+                    <div class="text-3xl font-semibold text-white">4.5K</div>
+                    <div class="text-xs text-green-500 mt-1"><i class="fas fa-arrow-up fa-xs"></i> 15.2%</div>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4 shadow-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-400">Views</span>
+                        <i class="fas fa-eye text-gray-500"></i>
+                    </div>
+                    <div class="text-3xl font-semibold text-white">180.7K</div>
+                    <div class="text-xs text-green-500 mt-1"><i class="fas fa-arrow-up fa-xs"></i> 11.8%</div>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4 shadow-lg">
+                     <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-400">Avg. View Duration</span>
+                        <i class="fas fa-stopwatch text-yellow-500"></i>
+                    </div>
+                    <div class="text-3xl font-semibold text-white">3:45</div>
+                    <div class="text-xs text-red-500 mt-1"><i class="fas fa-arrow-down fa-xs"></i> -5.1%</div>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-4 shadow-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-400">Subscribers</span>
+                        <i class="fas fa-users text-green-500"></i>
+                    </div>
+                    <div class="text-3xl font-semibold text-white">+1,230</div>
+                     <div class="text-xs text-gray-500 mt-1">vs. previous period</div>
+                </div>
+            </div>
+
+            <!-- Main Charts -->
+             <div class="bg-gray-800 rounded-lg p-4 shadow-lg mb-6">
+                <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-700">
+                    <h3 class="text-lg font-semibold text-white">Views Over Time</h3>
+                    <button class="text-gray-400 hover:text-white p-1"><i class="fas fa-ellipsis-h"></i></button>
+                </div>
+                <div class="chart-container">
+                     <canvas id="viewsOverTimeChart"></canvas>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                 <div class="bg-gray-800 rounded-lg p-4 shadow-lg">
+                    <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-700">
+                        <h3 class="text-lg font-semibold text-white">Traffic Sources</h3>
+                         <button class="text-gray-400 hover:text-white p-1"><i class="fas fa-ellipsis-h"></i></button>
+                    </div>
+                     <div class="chart-container h-64 sm:h-72"> <!-- Điều chỉnh chiều cao nếu cần -->
+                         <canvas id="trafficSourcesChart"></canvas>
+                     </div>
+                 </div>
+                 <div class="bg-gray-800 rounded-lg p-4 shadow-lg">
+                     <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-700">
+                        <h3 class="text-lg font-semibold text-white">Audience Demographics</h3>
+                         <button class="text-gray-400 hover:text-white p-1"><i class="fas fa-ellipsis-h"></i></button>
+                    </div>
+                     <div class="chart-container h-64 sm:h-72">
+                         <canvas id="audienceDemographicsChart"></canvas>
+                     </div>
+                 </div>
+            </div>
+
+            <!-- Top Videos Table -->
+             <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden"> <!-- Thêm overflow-hidden -->
+                 <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                     <h3 class="text-lg font-semibold text-white">Top Videos (Last 30 days)</h3>
+                     <button class="text-gray-400 hover:text-white p-1"><i class="fas fa-sort-amount-down"></i></button>
+                 </div>
+                 <div class="overflow-x-auto"> <!-- Cho phép cuộn ngang bảng trên mobile -->
+                     <table class="w-full text-sm text-left text-gray-400">
+                         <thead class="text-xs text-gray-400 uppercase bg-gray-700">
+                             <tr>
+                                 <th scope="col" class="px-4 py-3">Video</th>
+                                 <th scope="col" class="px-4 py-3 text-right">Views</th>
+                                 <th scope="col" class="px-4 py-3 text-right">Watch Time (Hrs)</th>
+                                 <th scope="col" class="px-4 py-3 text-right">Avg. Duration</th>
+                                 <th scope="col" class="px-4 py-3 text-right">Likes</th>
+                             </tr>
+                         </thead>
+                         <tbody>
+                             <tr class="border-b border-gray-700 hover:bg-gray-700/50">
+                                 <td class="px-4 py-3 font-medium text-white whitespace-nowrap">Advanced CSS Grid Techniques</td>
+                                 <td class="px-4 py-3 text-right text-white">5.8K</td>
+                                 <td class="px-4 py-3 text-right">150.5</td>
+                                 <td class="px-4 py-3 text-right">4:15</td>
+                                 <td class="px-4 py-3 text-right text-white">620</td>
+                             </tr>
+                              <tr class="border-b border-gray-700 hover:bg-gray-700/50">
+                                 <td class="px-4 py-3 font-medium text-white whitespace-nowrap">Cooking Pasta Like a Pro</td>
+                                 <td class="px-4 py-3 text-right text-white">10.2K</td>
+                                 <td class="px-4 py-3 text-right">310.0</td>
+                                 <td class="px-4 py-3 text-right">5:30</td>
+                                 <td class="px-4 py-3 text-right text-white">1.1K</td>
+                             </tr>
+                              <tr class="hover:bg-gray-700/50"> <!-- Hàng cuối không có border-b -->
+                                 <td class="px-4 py-3 font-medium text-white whitespace-nowrap">Introduction to AI Development</td>
+                                 <td class="px-4 py-3 text-right text-white">1.2K</td>
+                                 <td class="px-4 py-3 text-right">35.2</td>
+                                 <td class="px-4 py-3 text-right">3:10</td>
+                                 <td class="px-4 py-3 text-right text-white">150</td>
+                             </tr>
+                              <!-- More rows -->
+                         </tbody>
+                     </table>
+                 </div>
+             </div>
+        </main>
     </div>
 
-    <!-- Bỏ comment dòng này để thêm Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // --- Helper function to get CSS variable ---
+            // --- Helper function to get CSS variable (for backup colors) ---
             const style = getComputedStyle(document.documentElement);
-            const getCssVar = (varName) => style.getPropertyValue(varName).trim() || undefined;
+            const getCssVar = (varName, fallback) => style.getPropertyValue(varName).trim() || fallback;
 
-            // --- Colors from CSS Variables ---
-            const accentColor = getCssVar('--accent-color') || '#58a6ff';
-            const accentAltColor = getCssVar('--accent-alt') || '#3fb950';
-            const warningColor = getCssVar('--warning-color') || '#e3b341';
-            const purpleColor = getCssVar('--purple-accent') || '#a371f7';
-            const secondaryColor = getCssVar('--text-secondary') || '#8b949e';
-            const borderColor = getCssVar('--border-color') || '#30363d';
+            // --- Colors using Tailwind defaults (or map your CSS vars if needed) ---
+            const twColors = {
+                blue: { 500: '#3b82f6' },
+                green: { 500: '#22c55e' }, // Brighter green than accent-alt usually
+                yellow: { 500: '#eab308' }, // Closer to warning
+                purple: { 500: '#a855f7' }, // Closer to purple-accent
+                gray: { 400: '#9ca3af', 500: '#6b7280', 700: '#374151', 800: '#1f2937', 900: '#111827'},
+                white: '#ffffff',
+                transparent: 'transparent'
+            };
 
-            // --- Default Chart Options ---
+
+            // --- Default Chart Options using Tailwind colors ---
             const defaultChartOptions = {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        labels: { color: secondaryColor },
+                        labels: { color: twColors.gray[400] }, // text-gray-400
                         position: 'bottom',
                     },
                     tooltip: {
-                        backgroundColor: 'rgba(13, 17, 23, 0.9)',
-                        titleColor: '#e6edf3',
-                        bodyColor: '#e6edf3',
-                        borderColor: borderColor,
+                        backgroundColor: 'rgba(17, 24, 39, 0.9)', // bg-gray-900/90
+                        titleColor: twColors.white,
+                        bodyColor: twColors.gray[300] || '#d1d5db', // text-gray-300
+                        borderColor: twColors.gray[700], // border-gray-700
                         borderWidth: 1,
                         padding: 10,
                         displayColors: false,
+                        titleFont: { weight: '600' },
+                        bodyFont: { size: 13 },
                     }
                 },
-                 interaction: { mode: 'nearest', axis: 'x', intersect: false }
+                 interaction: { mode: 'index', axis: 'x', intersect: false } // Changed mode to index
+            };
+
+            // --- Chart Initialization Function ---
+             const initChart = (canvasId, config) => {
+                const ctx = document.getElementById(canvasId);
+                if (ctx) {
+                    try { // Add try-catch for robustness
+                         ctx.getContext('2d'); // Initialize context
+                         new Chart(ctx, config);
+                    } catch (e) {
+                        console.error(`Error initializing chart '${canvasId}':`, e);
+                    }
+                } else {
+                    console.warn(`Canvas element with ID '${canvasId}' not found.`); // Use warn
+                }
             };
 
              // --- 1. Views Over Time Chart (Line) ---
-            const ctxViews = document.getElementById('viewsOverTimeChart');
-            if (ctxViews) {
-                 ctxViews.getContext('2d');
-                 const viewsLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; // Example labels
-                 const viewsData = [5000, 7000, 6500, 8000, 9500, 11000, 10500, 12000, 13500, 14000, 15500, 16000]; // Example data
+            const viewsLabels = Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`); // Dynamic labels for 30 days
+            const viewsData = Array.from({ length: 30 }, () => Math.floor(Math.random() * 4000) + 1000); // Random data
 
-                 new Chart(ctxViews, {
-                     type: 'line',
-                     data: {
-                         labels: viewsLabels,
-                         datasets: [{
-                             label: 'Views',
-                             data: viewsData,
-                             borderColor: accentColor,
-                             backgroundColor: `${accentColor}33`,
-                             fill: true,
-                             tension: 0.4,
-                             pointBackgroundColor: accentColor,
-                             pointRadius: 3,
-                             pointHoverRadius: 5,
-                         }]
+            initChart('viewsOverTimeChart', {
+                 type: 'line',
+                 data: {
+                     labels: viewsLabels,
+                     datasets: [{
+                         label: 'Views',
+                         data: viewsData,
+                         borderColor: twColors.blue[500],
+                         backgroundColor: 'rgba(59, 130, 246, 0.1)', // Tailwind blue-500 with low alpha
+                         fill: true,
+                         tension: 0.4,
+                         pointBackgroundColor: twColors.blue[500],
+                         pointRadius: 0, // Hide points by default
+                         pointHoverRadius: 4, // Show on hover
+                     }]
+                 },
+                 options: {
+                     ...defaultChartOptions,
+                     scales: {
+                         x: { grid: { display: false }, ticks: { color: twColors.gray[400], maxRotation: 0, autoSkip: true, maxTicksLimit: 10, font: { size: 10 } } },
+                         y: { beginAtZero: true, grid: { color: twColors.gray[700], drawBorder: false }, ticks: { color: twColors.gray[400], font: { size: 10 } } }
                      },
-                     options: {
-                         ...defaultChartOptions, // Use default options
-                         scales: {
-                            x: { grid: { display: false }, ticks: { color: secondaryColor, maxRotation: 0, autoSkip: true, maxTicksLimit: 12 } },
-                            y: { beginAtZero: true, grid: { color: borderColor, drawBorder: false }, ticks: { color: secondaryColor } }
-                        },
-                         plugins: { ...defaultChartOptions.plugins, legend: { display: false } } // Override legend display
-                     }
-                 });
-            } else { console.error("Canvas 'viewsOverTimeChart' not found."); }
+                     plugins: {
+                        ...defaultChartOptions.plugins,
+                         legend: { display: false },
+                         tooltip: { // Customize tooltip for line chart
+                             ...defaultChartOptions.plugins.tooltip,
+                             callbacks: {
+                                 label: function(context) {
+                                     let label = context.dataset.label || '';
+                                     if (label) { label += ': '; }
+                                     if (context.parsed.y !== null) {
+                                         label += context.parsed.y.toLocaleString();
+                                     }
+                                     return label;
+                                 }
+                             }
+                         }
+                      }
+                 }
+             });
 
             // --- 2. Traffic Sources Chart (Doughnut) ---
-            const ctxTraffic = document.getElementById('trafficSourcesChart');
-            if (ctxTraffic) {
-                 ctxTraffic.getContext('2d');
-                 const trafficLabels = ['External', 'Search', 'Direct', 'Social', 'Other'];
-                 const trafficData = [45, 25, 15, 10, 5]; // Example data (percentages)
+            const trafficLabels = ['External', 'Search', 'Direct', 'Social', 'Other'];
+            const trafficData = [45, 25, 15, 10, 5];
 
-                 new Chart(ctxTraffic, {
-                     type: 'doughnut',
-                     data: {
-                         labels: trafficLabels,
-                         datasets: [{
-                             label: 'Traffic Source',
-                             data: trafficData,
-                             backgroundColor: [
-                                 accentColor,
-                                 accentAltColor,
-                                 warningColor,
-                                 purpleColor,
-                                 secondaryColor + '80' // Add some transparency
-                             ],
-                             borderColor: getCssVar('--bg-secondary') || '#161b22', // Border same as widget bg for separation
-                             borderWidth: 2,
-                             hoverOffset: 4
-                         }]
-                     },
-                     options: {
-                         ...defaultChartOptions,
-                          cutout: '65%', // Make it a doughnut chart
-                          plugins: {
-                              ...defaultChartOptions.plugins,
-                              tooltip: {
-                                   ...defaultChartOptions.plugins.tooltip,
-                                   callbacks: { // Show label and percentage in tooltip
-                                       label: function(context) {
-                                            let label = context.label || '';
-                                            if (label) { label += ': '; }
-                                            if (context.parsed !== null) {
-                                                label += context.parsed + '%';
-                                            }
-                                            return label;
-                                       }
+            initChart('trafficSourcesChart', {
+                 type: 'doughnut',
+                 data: {
+                     labels: trafficLabels,
+                     datasets: [{
+                         label: 'Traffic Source',
+                         data: trafficData,
+                         backgroundColor: [
+                             twColors.blue[500],
+                             twColors.green[500],
+                             twColors.yellow[500],
+                             twColors.purple[500],
+                             twColors.gray[500]
+                         ],
+                         borderColor: twColors.gray[800], // Match widget background
+                         borderWidth: 3, // Slightly thicker border for separation
+                         hoverOffset: 8
+                     }]
+                 },
+                 options: {
+                     ...defaultChartOptions,
+                      cutout: '65%',
+                      plugins: {
+                          ...defaultChartOptions.plugins,
+                          tooltip: {
+                               ...defaultChartOptions.plugins.tooltip,
+                               callbacks: {
+                                   label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) { label += ': '; }
+                                        if (context.parsed !== null) { label += context.parsed + '%'; }
+                                        return label;
                                    }
-                              }
+                               }
                           }
-                     }
-                 });
-            } else { console.error("Canvas 'trafficSourcesChart' not found."); }
+                      }
+                 }
+             });
 
              // --- 3. Audience Demographics Chart (Bar) ---
-            const ctxAudience = document.getElementById('audienceDemographicsChart');
-            if (ctxAudience) {
-                 ctxAudience.getContext('2d');
-                 const audienceLabels = ['18-24', '25-34', '35-44', '45-54', '55-64', '65+'];
-                 const audienceData = [25, 35, 20, 10, 5, 5]; // Example data (percentages)
+            const audienceLabels = ['18-24', '25-34', '35-44', '45-54', '55-64', '65+'];
+            const audienceData = [25, 35, 20, 10, 5, 5];
 
-                 new Chart(ctxAudience, {
-                     type: 'bar',
-                     data: {
-                         labels: audienceLabels,
-                         datasets: [{
-                             label: 'Audience Age',
-                             data: audienceData,
-                             backgroundColor: `${accentColor}b3`, // Semi-transparent accent
-                             borderColor: accentColor,
-                             borderWidth: 1,
-                             borderRadius: 4, // Rounded bars
-                             maxBarThickness: 40, // Limit bar width
-                         }]
+            initChart('audienceDemographicsChart', {
+                 type: 'bar',
+                 data: {
+                     labels: audienceLabels,
+                     datasets: [{
+                         label: 'Audience Age %',
+                         data: audienceData,
+                         backgroundColor: 'rgba(59, 130, 246, 0.6)', // Tailwind blue-500 with alpha
+                         borderColor: twColors.blue[500],
+                         borderWidth: 1,
+                         borderRadius: 4,
+                         maxBarThickness: 35, // Adjusted thickness
+                     }]
+                 },
+                 options: {
+                     ...defaultChartOptions,
+                     scales: {
+                         x: { grid: { display: false }, ticks: { color: twColors.gray[400], font: { size: 10 } } },
+                         y: { beginAtZero: true, grid: { color: twColors.gray[700], drawBorder: false }, ticks: { color: twColors.gray[400], font: { size: 10 }, callback: function(value) { return value + '%'; } } }
                      },
-                     options: {
-                         ...defaultChartOptions,
-                         scales: {
-                             x: { grid: { display: false }, ticks: { color: secondaryColor } },
-                             y: { beginAtZero: true, grid: { color: borderColor, drawBorder: false }, ticks: { color: secondaryColor, callback: function(value) { return value + '%'; } } } // Add % sign
-                         },
-                         plugins: {
-                             ...defaultChartOptions.plugins,
-                             legend: { display: false }, // Hide legend if only one dataset
-                             tooltip: {
-                                 ...defaultChartOptions.plugins.tooltip,
-                                 callbacks: { // Add % to tooltip
-                                     label: function(context) {
-                                         let label = context.dataset.label || '';
-                                         if (label) { label += ': '; }
-                                         if (context.parsed.y !== null) {
-                                             label += context.parsed.y + '%';
-                                         }
-                                         return label;
-                                     }
+                     plugins: {
+                         ...defaultChartOptions.plugins,
+                         legend: { display: false },
+                         tooltip: {
+                             ...defaultChartOptions.plugins.tooltip,
+                             callbacks: {
+                                 label: function(context) {
+                                     let label = context.dataset.label || '';
+                                     if (label) { label = label.replace('%', '').trim() + ': '; } // Clean up label
+                                     if (context.parsed.y !== null) { label += context.parsed.y + '%'; }
+                                     return label;
                                  }
                              }
                          }
                      }
-                 });
-            } else { console.error("Canvas 'audienceDemographicsChart' not found."); }
+                 }
+             });
 
         });
     </script>

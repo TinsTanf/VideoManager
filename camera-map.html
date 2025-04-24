@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Map - System Dashboard</title> <!-- Đổi Title -->
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome (Vẫn cần cho icon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind Custom Configuration -->
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {}
+        }
+      }
+    </script>
+    <style>
+        /* Global dark theme styles */
+        html, body {
+            background-color: #111827; /* bg-gray-900 */
+            color: #d1d5db; /* text-gray-300 */
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            overflow: hidden; /* Ngăn cuộn toàn trang vì các phần tử sẽ tự cuộn */
+        }
+        /* Simple style for active camera list item */
+        .camera-item.active {
+            background-color: #1e40af; /* bg-blue-800 */
+            border-left-color: #3b82f6; /* border-blue-500 */
+            color: #f9fafb; /* text-gray-50 */
+        }
+        /* Style cho marker để dễ click hơn */
+        .camera-marker {
+            /* Kích thước và các style khác đặt trong class Tailwind */
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5)); /* Thêm bóng đổ */
+        }
+         .camera-marker:hover {
+             transform: scale(1.15);
+             z-index: 10;
+         }
+         /* Style cho map image để nó không bị kéo giãn */
+         .map img {
+             min-width: 100%;
+             min-height: 100%;
+             object-fit: cover; /* Hoặc 'contain' nếu muốn thấy toàn bộ map */
+         }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300">
+
+    <!-- Container chính -->
+    <div class="min-h-screen flex flex-col">
+
+        <!-- Top Navigation (Giống dashboard) -->
+        <nav class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50 flex-shrink-0">
+            <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 flex items-center text-white mr-6">
+                            <i class="fas fa-map-marked-alt text-blue-400 mr-2 text-xl"></i> <!-- Đổi icon -->
+                            <span class="font-bold text-lg">Camera Map View</span>
+                        </div>
+                        <!-- Nav Links (Có thể thêm link khác nếu cần) -->
+                        <div class="hidden md:block">
+                            <div class="ml-10 flex items-baseline space-x-4">
+                                <a href="dashboard.html" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium" aria-current="page">Dashboard</a>
+                                <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Camera Map</a>
+                                <a href="camera-monitoring.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Camera</a>
+                                <a href="analytics.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Analysis</a>
+                                <a href="comments.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Comments</a>
+                                <a href="summary.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Summary</a>
+                                <a href="settings.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Settings</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-4 flex items-center md:ml-6 gap-4">
+                             <button class="bg-green-600 hover:bg-green-700 text-white text-xs font-medium py-1.5 px-3 rounded-md inline-flex items-center gap-1.5">
+                                <i class="fas fa-bell"></i> Alerts (3)
+                            </button>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium py-1.5 px-3 rounded-md inline-flex items-center gap-1.5">
+                               <i class="fas fa-plus"></i> Add Camera
+                            </button>
+                             <div class="relative"> <!-- User Profile Dropdown -->
+                                <button type="button" class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                                    <span class="sr-only">Open user menu</span>
+                                    <img class="h-8 w-8 rounded-full" src="https://placehold.co/40x40/8b949e/e6edf3?text=A" alt="Admin">
+                                    <span class="ml-2 text-sm font-medium hidden lg:block">Admin</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="-mr-2 flex md:hidden"> <button> ... (Mobile menu button) ... </button> </div>
+                </div>
+            </div>
+             <!-- Mobile menu (Nếu cần) -->
+            <div class="md:hidden hidden" id="mobile-menu"> ... </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="flex flex-1 overflow-hidden"> <!-- Flex row cho sidebar và map -->
+
+             <!-- Camera List Panel (Sidebar) -->
+             <aside class="w-72 bg-gray-800 border-r border-gray-700 flex flex-col flex-shrink-0">
+                 <!-- Search Box -->
+                 <div class="p-4 border-b border-gray-700">
+                     <div class="relative">
+                         <input type="search" placeholder="Search cameras..." class="block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm pl-10 pr-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                             <i class="fas fa-search text-gray-400"></i>
+                         </div>
+                     </div>
+                 </div>
+                 <!-- Camera List -->
+                 <ul class="flex-1 overflow-y-auto camera-list">
+                      <!-- Active Camera Item -->
+                     <li class="camera-item flex items-center px-4 py-3 border-l-4 cursor-pointer transition duration-150 ease-in-out active">
+                         <span class="w-2.5 h-2.5 rounded-full bg-green-500 mr-3 flex-shrink-0" title="Online"></span>
+                         <div class="flex-1 min-w-0">
+                             <p class="text-sm font-medium text-white truncate">Parking Lot North</p>
+                             <p class="text-xs text-gray-400 truncate">Area 2</p>
+                         </div>
+                         <i class="fas fa-chevron-right text-gray-600 text-xs ml-2"></i>
+                     </li>
+                     <!-- Online Camera Item -->
+                      <li class="camera-item flex items-center px-4 py-3 border-l-4 border-transparent hover:bg-gray-700/50 cursor-pointer transition duration-150 ease-in-out">
+                         <span class="w-2.5 h-2.5 rounded-full bg-green-500 mr-3 flex-shrink-0" title="Online"></span>
+                         <div class="flex-1 min-w-0">
+                             <p class="text-sm font-medium text-gray-300 truncate">Main Entrance</p>
+                             <p class="text-xs text-gray-400 truncate">Building A</p>
+                         </div>
+                     </li>
+                     <!-- Warning Camera Item -->
+                      <li class="camera-item flex items-center px-4 py-3 border-l-4 border-transparent hover:bg-gray-700/50 cursor-pointer transition duration-150 ease-in-out">
+                         <span class="w-2.5 h-2.5 rounded-full bg-yellow-500 mr-3 flex-shrink-0" title="Warning"></span>
+                          <div class="flex-1 min-w-0">
+                             <p class="text-sm font-medium text-gray-300 truncate">Highway Junction</p>
+                             <p class="text-xs text-gray-400 truncate">Exit 12</p>
+                         </div>
+                     </li>
+                     <!-- Offline Camera Item -->
+                     <li class="camera-item flex items-center px-4 py-3 border-l-4 border-transparent hover:bg-gray-700/50 cursor-pointer transition duration-150 ease-in-out">
+                         <span class="w-2.5 h-2.5 rounded-full bg-red-600 mr-3 flex-shrink-0" title="Offline"></span>
+                         <div class="flex-1 min-w-0">
+                             <p class="text-sm font-medium text-gray-300 truncate">Park West Gate</p>
+                             <p class="text-xs text-gray-400 truncate">Central Park</p>
+                         </div>
+                     </li>
+                     <!-- Thêm các camera khác -->
+                     <li class="camera-item flex items-center px-4 py-3 border-l-4 border-transparent hover:bg-gray-700/50 cursor-pointer transition duration-150 ease-in-out"> <span class="w-2.5 h-2.5 rounded-full bg-green-500 mr-3 flex-shrink-0"></span> <div class="flex-1 min-w-0"><p class="text-sm font-medium text-gray-300 truncate">Shopping Mall</p><p class="text-xs text-gray-400 truncate">East Wing</p></div></li>
+                     <li class="camera-item flex items-center px-4 py-3 border-l-4 border-transparent hover:bg-gray-700/50 cursor-pointer transition duration-150 ease-in-out"> <span class="w-2.5 h-2.5 rounded-full bg-green-500 mr-3 flex-shrink-0"></span> <div class="flex-1 min-w-0"><p class="text-sm font-medium text-gray-300 truncate">Bridge Surveillance</p><p class="text-xs text-gray-400 truncate">North Bridge</p></div></li>
+                      <li class="camera-item flex items-center px-4 py-3 border-l-4 border-transparent hover:bg-gray-700/50 cursor-pointer transition duration-150 ease-in-out"> <span class="w-2.5 h-2.5 rounded-full bg-green-500 mr-3 flex-shrink-0"></span> <div class="flex-1 min-w-0"><p class="text-sm font-medium text-gray-300 truncate">Industrial Zone</p><p class="text-xs text-gray-400 truncate">Sector B</p></div></li>
+                     <li class="camera-item flex items-center px-4 py-3 border-l-4 border-transparent hover:bg-gray-700/50 cursor-pointer transition duration-150 ease-in-out"> <span class="w-2.5 h-2.5 rounded-full bg-yellow-500 mr-3 flex-shrink-0"></span> <div class="flex-1 min-w-0"><p class="text-sm font-medium text-gray-300 truncate">Waterfront Area</p><p class="text-xs text-gray-400 truncate">Pier 3</p></div></li>
+                      <li class="camera-item flex items-center px-4 py-3 border-l-4 border-transparent hover:bg-gray-700/50 cursor-pointer transition duration-150 ease-in-out"> <span class="w-2.5 h-2.5 rounded-full bg-green-500 mr-3 flex-shrink-0"></span> <div class="flex-1 min-w-0"><p class="text-sm font-medium text-gray-300 truncate">Airport Terminal</p><p class="text-xs text-gray-400 truncate">Terminal A</p></div></li>
+                     <li class="camera-item flex items-center px-4 py-3 border-l-4 border-transparent hover:bg-gray-700/50 cursor-pointer transition duration-150 ease-in-out"> <span class="w-2.5 h-2.5 rounded-full bg-red-600 mr-3 flex-shrink-0"></span> <div class="flex-1 min-w-0"><p class="text-sm font-medium text-gray-300 truncate">School Entrance</p><p class="text-xs text-gray-400 truncate">Main Building</p></div></li>
+                 </ul>
+             </aside>
+
+             <!-- Map Area -->
+             <div class="flex-1 relative map-container overflow-hidden"> <!-- Thêm relative và overflow -->
+                 <!-- Map Background/Layer -->
+                 <div class="absolute inset-0 map">
+                      <!-- Thay thế bằng thư viện map thực tế (Leaflet, Mapbox, Google Maps) hoặc ảnh map -->
+                      <img src="https://placehold.co/1920x1080/4b5563/9ca3af?text=Map+Placeholder" alt="Map Background" class="absolute inset-0 w-full h-full">
+                 </div>
+
+                 <!-- Camera Markers (position: absolute) -->
+                 <!-- Online Marker Example -->
+                 <div class="camera-marker absolute transform -translate-x-1/2 -translate-y-full transition duration-150 ease-in-out" style="top:40%; left:50%;">
+                     <button class="focus:outline-none" title="Parking Lot North (Online)">
+                         <svg width="36" height="36" viewBox="0 0 38 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                             <path d="M19 0C8.507 0 0 8.52 0 19.027C0 29.534 19 48 19 48S38 29.534 38 19.027C38 8.52 29.493 0 19 0Z" fill="#22c55e"/> <!-- Tailwind green-500 -->
+                              <circle cx="19" cy="19" r="10" fill="white"/>
+                             <path d="M19 13L27 19L19 25L11 19L19 13Z" fill="#16a34a"/> <!-- Tailwind green-600 -->
+                         </svg>
+                     </button>
+                 </div>
+                 <!-- Warning Marker Example -->
+                 <div class="camera-marker absolute transform -translate-x-1/2 -translate-y-full transition duration-150 ease-in-out" style="top:50%; left:20%;">
+                    <button class="focus:outline-none" title="Waterfront Area (Warning)">
+                         <svg width="36" height="36" viewBox="0 0 38 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                             <path d="M19 0C8.507 0 0 8.52 0 19.027C0 29.534 19 48 19 48S38 29.534 38 19.027C38 8.52 29.493 0 19 0Z" fill="#f59e0b"/> <!-- Tailwind amber-500 -->
+                              <circle cx="19" cy="19" r="10" fill="white"/>
+                             <path d="M19 13L27 19L19 25L11 19L19 13Z" fill="#d97706"/> <!-- Tailwind amber-600 -->
+                         </svg>
+                     </button>
+                 </div>
+                 <!-- Offline Marker Example -->
+                 <div class="camera-marker absolute transform -translate-x-1/2 -translate-y-full transition duration-150 ease-in-out" style="top:65%; left:80%;">
+                      <button class="focus:outline-none" title="School Entrance (Offline)">
+                         <svg width="36" height="36" viewBox="0 0 38 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                             <path d="M19 0C8.507 0 0 8.52 0 19.027C0 29.534 19 48 19 48S38 29.534 38 19.027C38 8.52 29.493 0 19 0Z" fill="#ef4444"/> <!-- Tailwind red-500 -->
+                              <circle cx="19" cy="19" r="10" fill="white"/>
+                             <path d="M19 13L27 19L19 25L11 19L19 13Z" fill="#dc2626"/> <!-- Tailwind red-600 -->
+                         </svg>
+                     </button>
+                 </div>
+                 <!-- Thêm các marker khác với vị trí và màu tương ứng -->
+                  <div class="camera-marker absolute transform -translate-x-1/2 -translate-y-full transition duration-150 ease-in-out" style="top:25%; left:30%;"> <button title="Main Entrance (Online)"><svg width="36" height="36" viewBox="0 0 38 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 0C8.507 0 0 8.52 0 19.027C0 29.534 19 48 19 48S38 29.534 38 19.027C38 8.52 29.493 0 19 0Z" fill="#22c55e"/><circle cx="19" cy="19" r="10" fill="white"/><path d="M19 13L27 19L19 25L11 19L19 13Z" fill="#16a34a"/></svg></button></div>
+                  <div class="camera-marker absolute transform -translate-x-1/2 -translate-y-full transition duration-150 ease-in-out" style="top:30%; left:70%;"> <button title="Highway Junction (Warning)"><svg width="36" height="36" viewBox="0 0 38 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 0C8.507 0 0 8.52 0 19.027C0 29.534 19 48 19 48S38 29.534 38 19.027C38 8.52 29.493 0 19 0Z" fill="#f59e0b"/><circle cx="19" cy="19" r="10" fill="white"/><path d="M19 13L27 19L19 25L11 19L19 13Z" fill="#d97706"/></svg></button></div>
+
+
+                 <!-- Camera Popup (Initially Hidden) -->
+                 <div id="cameraPopup" class="camera-popup absolute bg-gray-800 border border-gray-700 rounded-lg shadow-xl w-80 z-50 hidden p-4">
+                     <div class="flex justify-between items-center border-b border-gray-700 pb-2 mb-3">
+                         <h3 id="popupTitle" class="font-semibold text-white text-base">Parking Lot North</h3>
+                         <button id="popupClose" class="text-gray-400 hover:text-white focus:outline-none">×</button>
+                     </div>
+                     <div class="bg-black rounded mb-3 aspect-video flex items-center justify-center text-gray-500">
+                          <!-- Live feed image -->
+                          <img id="popupFeedImage" src="https://placehold.co/320x180/111827/6b7280?text=Live+Feed" alt="Camera Feed" class="w-full h-full object-cover">
+                     </div>
+                     <div class="grid grid-cols-2 gap-2 mb-3">
+                         <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium py-1.5 px-2 rounded-md inline-flex items-center justify-center gap-1"><i class="fas fa-eye fa-xs"></i>View</button>
+                         <button class="bg-gray-600 hover:bg-gray-500 text-gray-300 text-xs font-medium py-1.5 px-2 rounded-md inline-flex items-center justify-center gap-1"><i class="fas fa-history fa-xs"></i>Playback</button>
+                         <button class="bg-gray-600 hover:bg-gray-500 text-gray-300 text-xs font-medium py-1.5 px-2 rounded-md inline-flex items-center justify-center gap-1"><i class="fas fa-arrows-alt fa-xs"></i>PTZ</button>
+                         <button class="bg-gray-600 hover:bg-gray-500 text-gray-300 text-xs font-medium py-1.5 px-2 rounded-md inline-flex items-center justify-center gap-1"><i class="fas fa-cog fa-xs"></i>Settings</button>
+                     </div>
+                     <div class="text-xs text-gray-400">
+                         Status: <span id="popupStatus" class="text-green-400 font-medium">Online</span> | IP: <span id="popupIp">192.168.1.102</span>
+                     </div>
+                 </div>
+
+                 <!-- Map Controls -->
+                 <div class="absolute top-4 right-4 flex flex-col gap-1 bg-gray-800/70 backdrop-blur-sm p-1.5 rounded-md shadow-lg">
+                     <button class="w-8 h-8 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded flex items-center justify-center focus:outline-none focus:ring-1 focus:ring-blue-500"><i class="fas fa-plus"></i></button>
+                     <button class="w-8 h-8 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded flex items-center justify-center focus:outline-none focus:ring-1 focus:ring-blue-500"><i class="fas fa-minus"></i></button>
+                     <button class="w-8 h-8 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded flex items-center justify-center focus:outline-none focus:ring-1 focus:ring-blue-500"><i class="fas fa-sync-alt fa-sm"></i></button>
+                 </div>
+
+                 <!-- Map Legend -->
+                 <div class="absolute bottom-4 left-4 bg-gray-800/70 backdrop-blur-sm p-3 rounded-md shadow-lg text-xs space-y-1.5">
+                     <div class="flex items-center gap-2">
+                         <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span> <span class="text-gray-300">Online Camera</span>
+                     </div>
+                     <div class="flex items-center gap-2">
+                         <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span> <span class="text-gray-300">Warning/Issue</span>
+                     </div>
+                     <div class="flex items-center gap-2">
+                         <span class="w-3 h-3 rounded-full bg-red-600 inline-block"></span> <span class="text-gray-300">Offline Camera</span>
+                     </div>
+                 </div>
+
+             </div> <!-- End Map Area -->
+
+        </div> <!-- End Main Content Flex Container -->
+
+        <!-- Status Bar (Footer) -->
+         <footer class="bg-gray-900 px-4 py-1.5 border-t border-gray-700 flex flex-wrap justify-between items-center text-xs text-gray-500 flex-shrink-0">
+             <span>Camera Map Management System v1.2.0</span>
+             <span>Connected: <span class="text-gray-300">8/10</span> | Server Status: <span class="text-green-400 font-medium">Online</span></span>
+             <span id="footerTime">24-04-2025 14:32:45</span>
+         </footer>
+
+    </div>
+
+    <script>
+        const cameraListItems = document.querySelectorAll('.camera-item');
+        const cameraMarkers = document.querySelectorAll('.camera-marker button'); // Select the button inside
+        const popup = document.getElementById('cameraPopup');
+        const popupTitle = document.getElementById('popupTitle');
+        const popupFeedImage = document.getElementById('popupFeedImage');
+        const popupStatus = document.getElementById('popupStatus');
+        const popupIp = document.getElementById('popupIp');
+        const popupCloseButton = document.getElementById('popupClose');
+        const mapContainer = document.querySelector('.map-container');
+        const footerTimeElement = document.getElementById('footerTime');
+
+        // --- Camera List Selection ---
+        cameraListItems.forEach(item => {
+            item.addEventListener('click', () => {
+                cameraListItems.forEach(cam => cam.classList.remove('active'));
+                item.classList.add('active');
+                // TODO: Add logic to potentially focus the map on the selected camera
+                console.log('Selected from list:', item.querySelector('.camera-name').textContent.trim());
+                 // Close popup when selecting from list
+                popup.classList.add('hidden');
+            });
+        });
+
+        // --- Marker Click to Show Popup ---
+        cameraMarkers.forEach(markerButton => {
+             const markerDiv = markerButton.closest('.camera-marker'); // Get the parent div for positioning
+             markerButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent map click closing popup immediately
+
+                // --- Get data from marker (or associated list item) ---
+                // In a real app, you'd fetch data based on camera ID
+                const cameraName = markerButton.getAttribute('title').split('(')[0].trim() || 'Unknown Camera';
+                const statusText = markerButton.getAttribute('title').includes('Online') ? 'Online' : (markerButton.getAttribute('title').includes('Warning') ? 'Warning' : 'Offline');
+                const statusColor = statusText === 'Online' ? 'text-green-400' : (statusText === 'Warning' ? 'text-yellow-400' : 'text-red-500');
+                const ipAddress = `192.168.1.${Math.floor(Math.random() * 254) + 1}`; // Random IP for demo
+                const feedUrl = `https://placehold.co/320x180/111827/6b7280?text=${encodeURIComponent(cameraName)}`;
+
+                // --- Update Popup Content ---
+                popupTitle.textContent = cameraName;
+                popupFeedImage.src = feedUrl;
+                popupStatus.textContent = statusText;
+                popupStatus.className = `font-medium ${statusColor}`; // Update color class
+                popupIp.textContent = ipAddress;
+
+                // --- Calculate Popup Position ---
+                const markerRect = markerDiv.getBoundingClientRect();
+                const containerRect = mapContainer.getBoundingClientRect();
+                const popupHeight = popup.offsetHeight; // Get height after content is set (may need slight delay)
+                const popupWidth = popup.offsetWidth;
+
+                let top = markerRect.top - containerRect.top - popupHeight - 10; // Position above marker + gap
+                let left = markerRect.left - containerRect.left + (markerRect.width / 2) - (popupWidth / 2); // Center horizontally
+
+                // Adjust if too high
+                 if (top < 10) {
+                     top = markerRect.bottom - containerRect.top + 10; // Position below marker
+                 }
+                 // Adjust if too far left/right
+                 if (left < 10) left = 10;
+                 if (left + popupWidth > containerRect.width - 10) left = containerRect.width - popupWidth - 10;
+
+                popup.style.top = `${top}px`;
+                popup.style.left = `${left}px`;
+
+                // --- Show Popup ---
+                popup.classList.remove('hidden');
+            });
+        });
+
+        // --- Close Popup ---
+        popupCloseButton?.addEventListener('click', () => {
+            popup.classList.add('hidden');
+        });
+
+        // Close popup when clicking outside
+        mapContainer?.addEventListener('click', (e) => {
+            if (!popup.classList.contains('hidden') && !e.target.closest('.camera-popup') && !e.target.closest('.camera-marker')) {
+                popup.classList.add('hidden');
+            }
+        });
+
+        // --- Update Time in Footer ---
+        function updateFooterTime() {
+            if (!footerTimeElement) return;
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            const timeString = now.toLocaleTimeString('en-GB');
+            footerTimeElement.textContent = `${day}-${month}-${year} ${timeString}`;
+        }
+        setInterval(updateFooterTime, 1000);
+        updateFooterTime(); // Initial call
+
+    </script>
+</body>
+</html>

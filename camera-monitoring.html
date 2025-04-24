@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surveillance Monitoring - SysDash</title> <!-- Đổi Title -->
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome (Vẫn cần cho icon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind Custom Configuration -->
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+              // Thêm aspect ratio nếu chưa có sẵn (Tailwind v3 thường có sẵn)
+              // aspectRatio: {
+              //   'video': '16 / 9',
+              // },
+          }
+        }
+      }
+    </script>
+    <style>
+        /* Global dark theme styles */
+        html, body {
+            background-color: #111827; /* bg-gray-900 */
+            color: #d1d5db; /* text-gray-300 */
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            overflow-x: hidden; /* Ngăn cuộn ngang không cần thiết */
+        }
+        /* Simple style for active camera list item */
+        .camera-list-item.active {
+            background-color: #374151; /* bg-gray-700 */
+            color: #f9fafb; /* text-gray-50 */
+            border-left-color: #3b82f6; /* border-blue-500 */
+        }
+         /* Custom style for PTZ grid - Tailwind grid can approximate this */
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300">
+
+    <!-- Container chính -->
+    <div class="min-h-screen flex flex-col">
+
+        <!-- Top Navigation (Giống dashboard) -->
+        <nav class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
+            <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <!-- Logo -->
+                        <div class="flex-shrink-0 flex items-center text-white mr-6">
+                            <i class="fas fa-video text-blue-400 mr-2 text-xl"></i>
+                            <span class="font-bold text-lg">SysDash Monitoring</span> <!-- Đổi tên -->
+                        </div>
+                        <!-- Nav Links (Có thể thêm link View, Analysis, Summary...) -->
+                        <div class="hidden md:block">
+                            <div class="ml-10 flex items-baseline space-x-4">
+                                <a href="dashboard.html" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium" aria-current="page">Dashboard</a>
+                                <a href="camera-map.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Camera Map</a>
+                                <a href="camera-monitoring.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Camera</a>
+                                <a href="analytics.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Analysis</a>
+                                <a href="comments.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Comments</a>
+                                <a href="summary.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Summary</a>
+                                <a href="settings.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Settings</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden md:block"> <div class="ml-4 flex items-center md:ml-6">
+                         <span class="text-sm mr-4 text-green-400 flex items-center gap-1"> <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span> Online</span>
+                         ... (Profile dropdown etc. giữ nguyên) ...
+                         </div> </div>
+                    <div class="-mr-2 flex md:hidden"> <button> ... (Mobile menu button giữ nguyên) ... </button> </div>
+                </div>
+            </div>
+             <!-- Mobile menu (Giữ nguyên) -->
+            <div class="md:hidden hidden" id="mobile-menu"> ... </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="flex flex-1 overflow-hidden"> <!-- Flex cho sidebar (panel) và nội dung chính -->
+
+             <!-- Camera List Panel (Thay thế sidebar cũ) -->
+             <aside class="w-64 bg-gray-800 p-4 border-r border-gray-700 overflow-y-auto flex-shrink-0 hidden lg:block"> <!-- Ẩn trên màn hình nhỏ hơn lg -->
+                 <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Site Areas</h3>
+                 <ul class="space-y-1 camera-list">
+                     <!-- Áp dụng Tailwind cho list items -->
+                     <li class="camera-list-item px-3 py-1.5 text-sm rounded cursor-pointer border-l-2 border-orange-500 bg-gray-700 text-white">Central Gate (01)</li>
+                     <li class="camera-list-item px-3 py-1.5 text-sm rounded cursor-pointer border-l-2 border-transparent hover:bg-gray-700/50 hover:text-white">Parking Area (03)</li>
+                     <li class="camera-list-item px-3 py-1.5 text-sm rounded cursor-pointer border-l-2 border-transparent hover:bg-gray-700/50 hover:text-white">Main Entrance (05)</li>
+                     <li class="camera-list-item px-3 py-1.5 text-sm rounded cursor-pointer border-l-2 border-transparent hover:bg-gray-700/50 hover:text-white">Reception Area (02)</li>
+                     <li class="camera-list-item px-3 py-1.5 text-sm rounded cursor-pointer border-l-2 border-transparent hover:bg-gray-700/50 hover:text-white">East Building (04)</li>
+                     <li class="camera-list-item px-3 py-1.5 text-sm rounded cursor-pointer border-l-2 border-transparent hover:bg-gray-700/50 hover:text-white">West Building (03)</li>
+                     <li class="camera-list-item px-3 py-1.5 text-sm rounded cursor-pointer border-l-2 border-transparent hover:bg-gray-700/50 hover:text-white">North Perimeter (01)</li>
+                     <li class="camera-list-item px-3 py-1.5 text-sm rounded cursor-pointer border-l-2 border-transparent hover:bg-gray-700/50 hover:text-white">South Perimeter (02)</li>
+                     <li class="camera-list-item px-3 py-1.5 text-sm rounded cursor-pointer border-l-2 border-transparent hover:bg-gray-700/50 hover:text-white">Central Hallway (07)</li>
+                     <li class="camera-list-item px-3 py-1.5 text-sm rounded cursor-pointer border-l-2 border-transparent hover:bg-gray-700/50 hover:text-white">Security Office (01)</li>
+                     <li class="camera-list-item px-3 py-1.5 text-sm rounded cursor-pointer border-l-2 border-transparent hover:bg-gray-700/50 hover:text-white">Waterfront Area (03)</li>
+                     <li class="camera-list-item px-3 py-1.5 text-sm rounded cursor-pointer border-l-2 border-transparent hover:bg-gray-700/50 hover:text-white">Bridge Entrance (02)</li>
+                     <li class="camera-list-item px-3 py-1.5 text-sm rounded cursor-pointer border-l-2 border-transparent hover:bg-gray-700/50 hover:text-white">East Park (01)</li>
+                     <li class="camera-list-item px-3 py-1.5 text-sm rounded cursor-pointer border-l-2 border-transparent hover:bg-gray-700/50 hover:text-white">West Park (01)</li>
+                     <li class="camera-list-item px-3 py-1.5 text-sm rounded cursor-pointer border-l-2 border-transparent hover:bg-gray-700/50 hover:text-white">Dam Structure (02)</li>
+                     <li class="camera-list-item px-3 py-1.5 text-sm rounded cursor-pointer border-l-2 border-transparent hover:bg-gray-700/50 hover:text-white">Main Road (01)</li>
+                 </ul>
+                  <div class="mt-auto pt-4 text-center text-xs text-gray-500 font-semibold tracking-wider">
+                    SURVEILLANCE SYSTEM
+                </div>
+             </aside>
+
+             <!-- Main Viewing Area -->
+             <div class="flex-1 flex flex-col overflow-hidden"> <!-- flex-col để status bar ở dưới -->
+
+                 <!-- Toolbar -->
+                 <div class="bg-gray-800 px-4 py-2 border-b border-gray-700 flex items-center flex-shrink-0">
+                      <button class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs font-medium py-1 px-3 rounded-md mr-2">Select All</button>
+                      <button class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs font-medium py-1 px-3 rounded-md mr-2">Deselect</button>
+                      <button class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs font-medium py-1 px-3 rounded-md mr-2">Full Screen</button>
+                      <button class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs font-medium py-1 px-3 rounded-md mr-2">Settings</button>
+                      <button class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs font-medium py-1 px-3 rounded-md mr-2">Export</button>
+                       <!-- Nút bật/tắt panel camera list trên mobile/tablet -->
+                       <button class="lg:hidden ml-auto bg-gray-700 hover:bg-gray-600 text-gray-300 p-1.5 rounded-md">
+                           <i class="fas fa-bars"></i>
+                       </button>
+                 </div>
+
+                 <!-- Camera Grid -->
+                 <div class="flex-1 p-4 grid grid-cols-1 sm:grid-cols-2 gap-4 overflow-y-auto"> <!-- Cho phép grid cuộn nếu cần -->
+                     <!-- Camera View 1 -->
+                     <div class="bg-black rounded-lg relative overflow-hidden aspect-video shadow-lg">
+                         <img src="https://placehold.co/640x360/111827/6b7280?text=Cam+1" alt="Camera 1" class="w-full h-full object-cover">
+                         <div class="absolute top-2 left-2 bg-black/60 px-2 py-0.5 text-xs rounded">Waterfront Area - Cam 01</div>
+                     </div>
+                     <!-- Camera View 2 -->
+                      <div class="bg-black rounded-lg relative overflow-hidden aspect-video shadow-lg">
+                         <img src="https://placehold.co/640x360/111827/6b7280?text=Cam+2" alt="Camera 2" class="w-full h-full object-cover">
+                         <div class="absolute top-2 left-2 bg-black/60 px-2 py-0.5 text-xs rounded">Bridge View - Cam 02</div>
+                     </div>
+                     <!-- Camera View 3 -->
+                      <div class="bg-black rounded-lg relative overflow-hidden aspect-video shadow-lg">
+                         <img src="https://placehold.co/640x360/111827/6b7280?text=Cam+3" alt="Camera 3" class="w-full h-full object-cover">
+                          <div class="absolute top-2 left-2 bg-black/60 px-2 py-0.5 text-xs rounded">Dam Structure - Cam 01</div>
+                     </div>
+                     <!-- Camera View 4 -->
+                      <div class="bg-black rounded-lg relative overflow-hidden aspect-video shadow-lg">
+                         <img src="https://placehold.co/640x360/111827/6b7280?text=Cam+4" alt="Camera 4" class="w-full h-full object-cover">
+                          <div class="absolute top-2 left-2 bg-black/60 px-2 py-0.5 text-xs rounded">East Park - Cam 01</div>
+                     </div>
+                      <!-- Add more views if needed -->
+                 </div>
+
+                 <!-- Camera Controls -->
+                 <div class="bg-gray-800 p-3 border-t border-gray-700 flex items-center gap-6 flex-shrink-0">
+                     <!-- PTZ Controls (Simplified with Grid) -->
+                     <div class="flex items-center gap-4">
+                          <span class="text-sm font-medium text-gray-400">PTZ:</span>
+                         <div class="grid grid-cols-3 grid-rows-3 gap-1 w-20 h-20">
+                            <button class="bg-gray-700 hover:bg-gray-600 rounded-sm flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-chevron-up fa-xs transform -rotate-45"></i></button>
+                            <button class="bg-gray-700 hover:bg-gray-600 rounded-sm flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-chevron-up"></i></button>
+                            <button class="bg-gray-700 hover:bg-gray-600 rounded-sm flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-chevron-up fa-xs transform rotate-45"></i></button>
+                            <button class="bg-gray-700 hover:bg-gray-600 rounded-sm flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-chevron-left"></i></button>
+                            <div class="bg-gray-600 rounded-full w-4 h-4 m-auto"></div> <!-- Center indicator -->
+                            <button class="bg-gray-700 hover:bg-gray-600 rounded-sm flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-chevron-right"></i></button>
+                            <button class="bg-gray-700 hover:bg-gray-600 rounded-sm flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-chevron-down fa-xs transform rotate-45"></i></button>
+                            <button class="bg-gray-700 hover:bg-gray-600 rounded-sm flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-chevron-down"></i></button>
+                            <button class="bg-gray-700 hover:bg-gray-600 rounded-sm flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-chevron-down fa-xs transform -rotate-45"></i></button>
+                         </div>
+                     </div>
+                     <!-- Zoom & Focus Controls -->
+                     <div class="flex flex-col gap-2">
+                         <div class="flex items-center gap-2">
+                              <span class="text-sm font-medium text-gray-400 w-12 text-right">Zoom:</span>
+                              <button class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs font-medium py-1 px-3 rounded-md"><i class="fas fa-plus"></i></button>
+                              <button class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs font-medium py-1 px-3 rounded-md"><i class="fas fa-minus"></i></button>
+                         </div>
+                          <div class="flex items-center gap-2">
+                              <span class="text-sm font-medium text-gray-400 w-12 text-right">Focus:</span>
+                              <button class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs font-medium py-1 px-3 rounded-md"><i class="fas fa-plus"></i></button>
+                              <button class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs font-medium py-1 px-3 rounded-md"><i class="fas fa-minus"></i></button>
+                         </div>
+                     </div>
+                     <!-- Add other controls if needed -->
+                 </div>
+
+                 <!-- Status Bar -->
+                 <div class="bg-gray-900 px-4 py-1 border-t border-gray-700 flex flex-wrap justify-between items-center text-xs text-gray-500 flex-shrink-0">
+                     <span>System Status: <span class="text-green-400 font-medium">Online</span></span>
+                     <span>Connected Cameras: <span class="text-gray-300">16/16</span></span>
+                     <span>VURIX Surveillance System v4.2.1</span>
+                     <span id="statusBarTime">24-04-2025 14:32:45</span> <!-- ID for JS update -->
+                 </div>
+             </div> <!-- End Main Viewing Area -->
+
+        </div> <!-- End Main Content Flex Container -->
+    </div>
+
+    <script>
+        // --- Camera List Selection ---
+        const cameraListItems = document.querySelectorAll('.camera-list-item');
+        cameraListItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Remove active class from all items
+                cameraListItems.forEach(li => li.classList.remove('active', 'bg-gray-700', 'text-white', 'border-orange-500'));
+                // Add active class to the clicked item
+                item.classList.add('active', 'bg-gray-700', 'text-white', 'border-orange-500');
+                // TODO: Add logic here to actually change the camera views in the grid
+                console.log('Selected:', item.textContent.trim());
+            });
+        });
+
+        // --- Update Time in Status Bar ---
+        const timeElement = document.getElementById('statusBarTime');
+        function updateTime() {
+            if (!timeElement) return; // Exit if element not found
+            const now = new Date();
+            // Format: DD-MM-YYYY HH:MM:SS (Use Intl for better formatting if needed)
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+            const year = now.getFullYear();
+            const timeString = now.toLocaleTimeString('en-GB'); // HH:MM:SS
+            timeElement.textContent = `${day}-${month}-${year} ${timeString}`;
+        }
+
+        setInterval(updateTime, 1000);
+        updateTime(); // Initial call
+
+        // --- Optional: Mobile Sidebar Toggle ---
+        // Add JS to handle the mobile menu button to toggle the camera list panel visibility
+        // Example (needs refinement based on exact behavior desired):
+        // const mobileMenuButton = document.querySelector('.lg\\:hidden.ml-auto');
+        // const cameraListPanel = document.querySelector('aside.w-64');
+        // if (mobileMenuButton && cameraListPanel) {
+        //     mobileMenuButton.addEventListener('click', () => {
+        //         cameraListPanel.classList.toggle('hidden'); // Or use more complex transitions
+        //         // Consider adding overlay or adjusting main content margin
+        //     });
+        // }
+
+    </script>
+</body>
+</html>

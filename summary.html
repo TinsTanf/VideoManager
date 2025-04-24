@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary - System Dashboard</title> <!-- Đổi Title -->
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN (Nếu bạn muốn giữ lại biểu đồ nhỏ) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <!-- Font Awesome (Nếu vẫn cần cho icon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind Custom Configuration -->
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {}
+        }
+      }
+    </script>
+    <style>
+        /* Global dark theme styles */
+        html, body {
+            background-color: #111827; /* bg-gray-900 */
+            color: #d1d5db; /* text-gray-300 */
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+        /* Dark theme select arrows */
+        select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            appearance: none;
+        }
+         /* Chart container height */
+        .chart-container-sm { /* Container nhỏ hơn cho summary */
+            height: 150px; /* Chiều cao nhỏ hơn */
+            position: relative;
+            width: 100%;
+        }
+         /* Tooltip style (Giữ nguyên) */
+         .chartjs-tooltip { background: rgba(17, 24, 39, 0.9) !important; border: 1px solid #374151 !important; border-radius: 0.375rem !important; color: #d1d5db !important; padding: 0.5rem 0.75rem !important; font-size: 0.875rem !important; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
+         .chartjs-tooltip-caret { display: none !important; }
+         .chartjs-tooltip-title { margin-bottom: 0.25rem !important; font-weight: 600 !important; color: #f9fafb !important; }
+         .chartjs-tooltip-body {}
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300">
+
+    <!-- Container chính -->
+    <div class="min-h-screen flex flex-col">
+
+        <!-- Top Navigation (Giống dashboard) -->
+        <nav class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
+            <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <!-- Logo -->
+                        <div class="flex-shrink-0 flex items-center text-white mr-6">
+                            <i class="fas fa-video text-blue-400 mr-2 text-xl"></i>
+                            <span class="font-bold text-lg">SysDash Summary</span> <!-- Đổi tên -->
+                        </div>
+                        <!-- Nav Links -->
+                        <div class="hidden md:block">
+                            <div class="ml-10 flex items-baseline space-x-4">
+                                <a href="dashboard.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                                <a href="camera-map.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Camera Map</a>
+                                <a href="camera-monitoring.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Camera</a>
+                                <a href="analytics.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Analytics</a>
+                                <a href="comments.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Comments</a>
+                                <a href="#" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium" aria-current="page">Summary</a> <!-- Active -->
+                                <a href="settings.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Settings</a>
+                                <!-- Thêm các link khác nếu cần -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden md:block"> <div class="ml-4 flex items-center md:ml-6"> ... (Profile dropdown etc. giữ nguyên) ... </div> </div>
+                    <div class="-mr-2 flex md:hidden"> <button> ... (Mobile menu button giữ nguyên) ... </button> </div>
+                </div>
+            </div>
+             <!-- Mobile menu (Giữ nguyên) -->
+            <div class="md:hidden hidden" id="mobile-menu"> ... </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="p-4 sm:p-6 flex-grow">
+
+             <h1 class="text-2xl font-semibold text-white mb-6">System Summary</h1>
+
+            <!-- Grid for Summary Widgets -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+                <!-- 1. Key Performance Indicators (KPIs) -->
+                <div class="bg-gray-800 rounded-lg shadow-lg p-6 space-y-4 xl:col-span-1 md:col-span-2"> <!-- Chiếm 1 cột trên XL, 2 cột trên MD -->
+                    <h2 class="text-lg font-semibold text-white border-b border-gray-700 pb-2 mb-3">Key Metrics</h2>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-400 flex items-center gap-2"><i class="fas fa-video fa-fw"></i> Total Videos</span>
+                        <span class="text-xl font-semibold text-white">1,530</span>
+                    </div>
+                     <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-400 flex items-center gap-2"><i class="fas fa-eye fa-fw"></i> Views (This Month)</span>
+                        <span class="text-xl font-semibold text-white">1.25M</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-400 flex items-center gap-2"><i class="fas fa-exclamation-triangle fa-fw text-yellow-500"></i> Active Alerts</span>
+                        <span class="text-xl font-semibold text-yellow-500">3</span>
+                    </div>
+                     <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-400 flex items-center gap-2"><i class="fas fa-hdd fa-fw"></i> Storage Usage</span>
+                        <div class="w-1/2 bg-gray-700 rounded-full h-2.5">
+                            <div class="bg-blue-600 h-2.5 rounded-full" style="width: 64%"></div> <!-- Ví dụ 64% -->
+                        </div>
+                        <span class="text-sm font-medium text-white">64%</span>
+                    </div>
+                     <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-400 flex items-center gap-2"><i class="fas fa-users fa-fw"></i> Active Users</span>
+                        <span class="text-xl font-semibold text-white">15</span>
+                    </div>
+                </div>
+
+                <!-- 2. Recent Activity Feed -->
+                <div class="bg-gray-800 rounded-lg shadow-lg p-6 xl:col-span-1 md:col-span-1">
+                    <h2 class="text-lg font-semibold text-white border-b border-gray-700 pb-2 mb-3">Recent Activity</h2>
+                    <ul class="space-y-3 max-h-80 overflow-y-auto pr-2"> <!-- Thêm giới hạn chiều cao và cuộn -->
+                        <li class="flex items-start gap-3 text-sm">
+                            <i class="fas fa-video text-blue-400 mt-1 fa-fw"></i>
+                            <div>
+                                <span class="font-medium text-white">New video uploaded:</span> "Advanced CSS Grid Techniques" by Alice.
+                                <span class="block text-xs text-gray-500">5 mins ago</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm">
+                            <i class="fas fa-comment text-green-400 mt-1 fa-fw"></i>
+                            <div>
+                                <span class="font-medium text-white">New comment on:</span> "Intro to AI" by Bob Miller.
+                                <span class="block text-xs text-gray-500">1 hour ago</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm">
+                             <i class="fas fa-user-plus text-purple-400 mt-1 fa-fw"></i>
+                            <div>
+                                <span class="font-medium text-white">New user registered:</span> charlie.g@sample.com (Viewer).
+                                <span class="block text-xs text-gray-500">3 hours ago</span>
+                            </div>
+                        </li>
+                         <li class="flex items-start gap-3 text-sm">
+                             <i class="fas fa-exclamation-circle text-red-500 mt-1 fa-fw"></i>
+                            <div>
+                                <span class="font-medium text-white">Camera Offline:</span> Parking Lot Cam 2.
+                                <span class="block text-xs text-gray-500">5 hours ago</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 text-sm">
+                            <i class="fas fa-thumbs-up text-yellow-400 mt-1 fa-fw"></i>
+                            <div>
+                                <span class="font-medium text-white">High Engagement:</span> "Cooking Pasta" reached 1K likes.
+                                <span class="block text-xs text-gray-500">1 day ago</span>
+                            </div>
+                        </li>
+                          <li class="flex items-start gap-3 text-sm">
+                            <i class="fas fa-cog text-gray-400 mt-1 fa-fw"></i>
+                            <div>
+                                <span class="font-medium text-white">Settings updated:</span> Notification preferences changed by Admin.
+                                <span class="block text-xs text-gray-500">2 days ago</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 3. System Status & Quick Actions -->
+                <div class="bg-gray-800 rounded-lg shadow-lg p-6 xl:col-span-1 md:col-span-1">
+                    <h2 class="text-lg font-semibold text-white border-b border-gray-700 pb-2 mb-3">System Status</h2>
+                     <div class="space-y-2 mb-6">
+                         <div class="flex justify-between items-center text-sm">
+                             <span class="text-gray-400">Overall Status</span>
+                             <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-green-900 text-green-300">Online</span>
+                         </div>
+                          <div class="flex justify-between items-center text-sm">
+                             <span class="text-gray-400">Server Load</span>
+                             <span class="text-white font-medium">Normal (35%)</span>
+                         </div>
+                          <div class="flex justify-between items-center text-sm">
+                             <span class="text-gray-400">Active Cameras</span>
+                             <span class="text-white font-medium">23 / 24</span> <!-- Ví dụ có 1 cam offline -->
+                         </div>
+                          <div class="flex justify-between items-center text-sm">
+                             <span class="text-gray-400">Last Backup</span>
+                             <span class="text-white font-medium">Today, 03:00 AM</span>
+                         </div>
+                     </div>
+
+                    <h2 class="text-lg font-semibold text-white border-b border-gray-700 pb-2 mb-3 mt-6">Quick Actions</h2>
+                     <div class="grid grid-cols-2 gap-3">
+                         <a href="upload.html" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded-md inline-flex items-center justify-center gap-2 text-center">
+                             <i class="fas fa-upload fa-sm"></i> Upload
+                         </a>
+                         <a href="videos.html" class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm font-medium py-2 px-3 rounded-md inline-flex items-center justify-center gap-2 text-center">
+                              <i class="fas fa-film fa-sm"></i> Manage Videos
+                         </a>
+                          <a href="users.html" class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm font-medium py-2 px-3 rounded-md inline-flex items-center justify-center gap-2 text-center">
+                              <i class="fas fa-users fa-sm"></i> Manage Users
+                         </a>
+                          <a href="analytics.html" class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm font-medium py-2 px-3 rounded-md inline-flex items-center justify-center gap-2 text-center">
+                             <i class="fas fa-chart-bar fa-sm"></i> View Analytics
+                         </a>
+                     </div>
+                </div>
+
+                 <!-- 4. Performance Snapshot (Optional Chart) -->
+                 <div class="bg-gray-800 rounded-lg shadow-lg p-6 md:col-span-2 xl:col-span-1"> <!-- Chiếm 1 hoặc 2 cột -->
+                    <h2 class="text-lg font-semibold text-white border-b border-gray-700 pb-2 mb-3">Views (Last 7 Days)</h2>
+                     <div class="chart-container-sm"> <!-- Container nhỏ hơn -->
+                        <canvas id="summaryViewsChart"></canvas>
+                    </div>
+                 </div>
+
+                  <!-- 5. Top Content Snippet (Optional) -->
+                 <div class="bg-gray-800 rounded-lg shadow-lg p-6 md:col-span-1 xl:col-span-1">
+                     <h2 class="text-lg font-semibold text-white border-b border-gray-700 pb-2 mb-3">Top Performing Videos</h2>
+                     <ul class="space-y-2">
+                         <li class="flex items-center gap-3 text-sm py-1">
+                             <span class="text-gray-500 w-4 text-center">1</span>
+                             <img src="https://placehold.co/80x45/1f2937/d1d5db?text=V4" alt="V" class="w-12 h-auto rounded-sm flex-shrink-0">
+                             <a href="#" class="text-white hover:text-blue-400 truncate flex-grow">Cooking Pasta Like a Pro</a>
+                             <span class="text-xs text-gray-400 flex-shrink-0">10.2K views</span>
+                         </li>
+                          <li class="flex items-center gap-3 text-sm py-1">
+                             <span class="text-gray-500 w-4 text-center">2</span>
+                              <img src="https://placehold.co/80x45/1f2937/d1d5db?text=V2" alt="V" class="w-12 h-auto rounded-sm flex-shrink-0">
+                             <a href="#" class="text-white hover:text-blue-400 truncate flex-grow">Advanced CSS Grid...</a>
+                             <span class="text-xs text-gray-400 flex-shrink-0">5.8K views</span>
+                         </li>
+                          <li class="flex items-center gap-3 text-sm py-1">
+                             <span class="text-gray-500 w-4 text-center">3</span>
+                              <img src="https://placehold.co/80x45/1f2937/d1d5db?text=V1" alt="V" class="w-12 h-auto rounded-sm flex-shrink-0">
+                             <a href="#" class="text-white hover:text-blue-400 truncate flex-grow">Introduction to AI Dev...</a>
+                             <span class="text-xs text-gray-400 flex-shrink-0">1.2K views</span>
+                         </li>
+                     </ul>
+                      <div class="text-right mt-3">
+                          <a href="analytics.html" class="text-xs text-blue-400 hover:text-blue-300">More details »</a>
+                      </div>
+                 </div>
+
+            </div> <!-- End Grid for Summary Widgets -->
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Chart.js Initialization ---
+            const initChart = (canvasId, config) => {
+                 const ctx = document.getElementById(canvasId);
+                 if (ctx) {
+                     try { new Chart(ctx, config); }
+                     catch (e) { console.error(`Error initializing chart '${canvasId}':`, e); }
+                 } else { console.warn(`Canvas element with ID '${canvasId}' not found.`); }
+            };
+
+            // --- Tailwind Colors (Simplified) ---
+             const twColors = {
+                 blue: { 500: '#3b82f6', 600: '#2563eb' },
+                 gray: { 400: '#9ca3af', 500: '#6b7280', 700: '#374151', 800: '#1f2937', 900: '#111827'},
+                 white: '#ffffff',
+                 transparent: 'transparent'
+             };
+
+            // --- Default Chart Options ---
+             const defaultChartOptions = {
+                 responsive: true, maintainAspectRatio: false,
+                 plugins: {
+                     legend: { display: false }, // Thường ẩn legend cho summary chart
+                     tooltip: { enabled: true, mode: 'index', intersect: false, backgroundColor: 'rgba(17, 24, 39, 0.9)', titleColor: twColors.white, bodyColor: twColors.gray[300] || '#d1d5db', borderColor: twColors.gray[700], borderWidth: 1, padding: 8, displayColors: false, bodyFont: { size: 12 }, titleFont: { weight: '600' } }
+                 },
+                 interaction: { mode: 'nearest', axis: 'x', intersect: false }
+            };
+
+             // --- Summary Views Chart (Line - Last 7 Days) ---
+            const summaryLabels = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
+            const summaryViewsData = [3100, 2900, 3300, 3500, 3400, 3700, 3600]; // Example data
+
+            initChart('summaryViewsChart', {
+                 type: 'line',
+                 data: {
+                     labels: summaryLabels,
+                     datasets: [{
+                         label: 'Views', data: summaryViewsData,
+                         borderColor: twColors.blue[500],
+                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                         fill: true, tension: 0.3,
+                         pointRadius: 0, pointHoverRadius: 4,
+                     }]
+                 },
+                 options: {
+                     ...defaultChartOptions,
+                     scales: {
+                         x: { grid: { display: false }, ticks: { color: twColors.gray[400], font: { size: 9 } } },
+                         y: { beginAtZero: false, grid: { color: twColors.gray[700] }, ticks: { color: twColors.gray[400], font: { size: 9 }, maxTicksLimit: 5 } } // Ít tick hơn
+                     }
+                 }
+             });
+        });
+    </script>
+</body>
+</html>
