@@ -1,0 +1,16 @@
+{
+    "labels": ["Technology", "Gaming", "Education", "Music", "Other"],
+    "datasets": [
+      {
+        "label": "Videos",
+        "data": [550, 320, 410, 150, 100],
+        "backgroundColor": [
+          "#3b82f6",
+          "#14b8a6",
+          "#059669",
+          "#8b5cf6",
+          "#6b7280"
+        ]
+      }
+    ]
+  }

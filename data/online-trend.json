@@ -1,0 +1,9 @@
+{
+  "labels": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+  "datasets": [
+    {
+      "label": "Online Cameras",
+      "data": [24, 24, 23, 23, 24, 23, 23]
+    }
+  ]
+}

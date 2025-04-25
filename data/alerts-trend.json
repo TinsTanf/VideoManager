@@ -1,0 +1,9 @@
+{
+    "labels": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    "datasets": [
+      {
+        "label": "Alerts",
+        "data": [1, 0, 2, 1, 0, 3, 0]
+      }
+    ]
+  }

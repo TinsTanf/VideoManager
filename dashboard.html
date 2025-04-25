@@ -9,7 +9,7 @@
     <!-- Cytoscape.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script> <!-- Sử dụng v3 để khớp với code cũ -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <!-- Font Awesome (Nếu vẫn cần cho icon) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Tailwind Custom Configuration -->
@@ -23,50 +23,18 @@
     </script>
     <style>
         /* Cytoscape container style */
-        #cy {
-            width: 100%;
-            height: 400px; /* Điều chỉnh nếu cần */
-            display: block;
-            background-color: #1f2937; /* bg-gray-800 */
-            border-radius: 0.5rem; /* rounded-lg */
-        }
+        #cy { width: 100%; height: 400px; display: block; background-color: #1f2937; border-radius: 0.5rem; }
         /* Bounding box style */
-        .bounding-box {
-            position: absolute;
-            border: 2px solid #3b82f6; /* border-blue-500 */
-            background-color: rgba(59, 130, 246, 0.1);
-        }
+        .bounding-box { position: absolute; border: 2px solid #3b82f6; background-color: rgba(59, 130, 246, 0.1); }
         /* Global dark theme styles */
-        html, body {
-            background-color: #111827; /* bg-gray-900 */
-            color: #d1d5db; /* text-gray-300 */
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-        }
+        html, body { background-color: #111827; color: #d1d5db; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; }
         /* Dark theme select arrows */
-        select {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.5rem center;
-            background-repeat: no-repeat;
-            background-size: 1.5em 1.5em;
-            padding-right: 2.5rem;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
+        select { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; -webkit-print-color-adjust: exact; print-color-adjust: exact; appearance: none;}
         /* Chart container height */
-        .chart-container {
-            height: 300px;
-            position: relative;
-            background-color: transparent;
-        }
+        .chart-container { height: 300px; position: relative; background-color: transparent; }
+        .chart-container-sm { height: 6rem; position: relative; width: 100%; } /* Container nhỏ hơn */
         /* Chart.js Tooltip custom style */
-        .chartjs-tooltip {
-            background: rgba(17, 24, 39, 0.9) !important; /* bg-gray-900 with opacity */
-            border: 1px solid #374151 !important; /* border-gray-700 */
-            border-radius: 0.375rem !important; /* rounded-md */
-            color: #d1d5db !important; /* text-gray-300 */
-            padding: 0.5rem 0.75rem !important; /* p-2 px-3 */
-            font-size: 0.875rem !important; /* text-sm */
-        }
+        .chartjs-tooltip { background: rgba(17, 24, 39, 0.9) !important; border: 1px solid #374151 !important; border-radius: 0.375rem !important; color: #d1d5db !important; padding: 0.5rem 0.75rem !important; font-size: 0.875rem !important; }
         .chartjs-tooltip-caret { display: none !important; }
         .chartjs-tooltip-title { margin-bottom: 0.25rem !important; font-weight: 600 !important; }
         .chartjs-tooltip-body {}
@@ -74,22 +42,22 @@
 </head>
 <body class="bg-gray-900 text-gray-300">
 
-    <!-- Top Navigation (Từ dashboard mới) -->
-    <nav class="bg-gray-800 border-b border-gray-700">
+    <!-- Top Navigation -->
+    <nav class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50"> <!-- Thêm sticky + z-index -->
         <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center">
-                    <!-- Thêm Logo nếu muốn -->
+                    <!-- Logo -->
                     <div class="flex-shrink-0 flex items-center text-white mr-6">
                         <i class="fas fa-video text-blue-400 mr-2 text-xl"></i>
-                        <span class="font-bold text-lg">SysDash</span> <!-- Đổi tên nếu cần -->
+                        <span class="font-bold text-lg">SysDash</span>
                     </div>
                     <!-- Nav Links -->
                     <div class="hidden md:block">
                         <div class="ml-10 flex items-baseline space-x-4">
-                            <a href="#" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium" aria-current="page">Dashboard</a>
+                            <a href="dashboard.html" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium" aria-current="page">Dashboard</a>
                             <a href="camera-map.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Camera Map</a>
-                            <a href="camera-monitoring.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Camera</a>
+                            <a href="camera-monitoring.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Cameras</a>
                             <a href="analytics.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Analysis</a>
                             <a href="comments.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Comments</a>
                             <a href="summary.html" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Summary</a>
@@ -113,12 +81,6 @@
                                     <img class="h-8 w-8 rounded-full" src="https://placehold.co/40x40/8b949e/e6edf3?text=JD" alt="">
                                 </button>
                             </div>
-                            <!-- Dropdown menu, show/hide based on menu state. -->
-                            <!-- <div class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
-                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -133,375 +95,263 @@
             </div>
         </div>
          <!-- Mobile menu, show/hide based on menu state. -->
-        <div class="md:hidden" id="mobile-menu">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#" class="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium" aria-current="page">Dashboard</a>
-                <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Analysis</a>
-                <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Summary</a>
-                <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Settings</a>
+        <div class="md:hidden hidden" id="mobile-menu">
+             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="dashboard.html" class="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium" aria-current="page">Dashboard</a>
+                <a href="camera-map.html" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Camera Map</a>
+                <a href="camera-monitoring.html" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Cameras</a>
+                <a href="analytics.html" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Analysis</a>
+                <a href="comments.html" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Comments</a>
+                <a href="summary.html" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Summary</a>
+                <a href="settings.html" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Settings</a>
             </div>
-             <div class="pt-4 pb-3 border-t border-gray-700">
-                 <div class="flex items-center px-5">
-                     <div class="flex-shrink-0"> <img class="h-10 w-10 rounded-full" src="https://placehold.co/40x40/8b949e/e6edf3?text=JD" alt=""> </div>
-                     <div class="ml-3"> <div class="text-base font-medium leading-none text-white">John Doe</div> <div class="text-sm font-medium leading-none text-gray-400">john.doe@example.com</div> </div>
-                     <button type="button" class="ml-auto bg-gray-800 flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"> <span class="sr-only">View notifications</span> <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341A6.002 6.002 0 006 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /> </svg> </button>
-                 </div>
-                 <!-- <div class="mt-3 px-2 space-y-1">
-                     <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">Your Profile</a>
-                     <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">Settings</a>
-                     <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">Sign out</a>
-                 </div> -->
-             </div>
+             <div class="pt-4 pb-3 border-t border-gray-700"> <div class="flex items-center px-5"> ... (User info mobile) ... </div> </div>
         </div>
     </nav>
 
-    <!-- Main Content Area (Tailwind Layout) -->
-    <main class="p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-5 gap-6">
+    <!-- Main Content Area -->
+    <main class="p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-5 gap-6 flex-grow"> <!-- Add flex-grow -->
 
         <!-- Left Column -->
         <div class="lg:col-span-3 flex flex-col gap-6">
             <!-- Graph Panel (Cytoscape) -->
             <div class="bg-gray-800 rounded-lg p-4 shadow-lg flex flex-col">
                 <div class="flex justify-between items-center mb-4 text-sm">
-                    <div>
-                        <span class="mr-4 font-semibold text-white">System Map</span> <!-- Đổi tên -->
-                        <span class="mr-4 text-gray-400">View</span>
-                    </div>
-                </div>
-                <div class="mb-3 flex justify-end items-center text-sm">
-                     <label for="layoutSelector" class="mr-2 text-gray-400">Layout:</label>
+                    <h3 class="text-lg font-semibold text-white">System Map</h3> <!-- Title -->
+                    <label for="layoutSelector" class="ml-auto mr-2 text-gray-400 text-xs">Layout:</label>
                      <select id="layoutSelector" class="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none">
-                         <option value="preset" selected>Preset (Manual)</option>
-                         <option value="grid">Grid</option>
-                         <option value="circle">Circle</option>
-                         <option value="concentric">Concentric</option>
-                         <option value="breadthfirst">Breadthfirst</option>
-                         <option value="cose">Force Directed (CoSE)</option>
-                         <option value="random">Random</option>
+                         <option value="preset" selected>Preset</option> <option value="grid">Grid</option> <option value="circle">Circle</option> <option value="concentric">Concentric</option> <option value="breadthfirst">Breadthfirst</option> <option value="cose">CoSE</option> <option value="random">Random</option>
                      </select>
                  </div>
-                <div id="cy" class="flex-grow min-h-[400px]"></div> <!-- Cytoscape container -->
-                <div class="flex justify-between items-center mt-4 text-sm">
-                     <!-- Bottom Controls for Cytoscape (Giữ nguyên) -->
-                     <div class="flex items-center gap-2"> ... </div>
-                     <div class="flex items-center gap-1"> ... </div>
+                <div id="cy" class="flex-grow min-h-[350px] sm:min-h-[400px]"></div> <!-- Adjusted min-height -->
+                <!-- Cytoscape Bottom Controls -->
+                <div class="flex justify-between items-center mt-3 text-xs text-gray-400">
+                    <span>Zoom: 75%</span>
+                    <span>Status: Connected</span>
                 </div>
-            </div> <!-- End Graph Panel -->
+            </div>
 
-            <!-- *** TÍCH HỢP WIDGET TỪ VIDMANAGE VÀO ĐÂY *** -->
-
-            <!-- Views Statistics Chart (Từ VidManage, đã áp dụng Tailwind) -->
+            <!-- Views Statistics Chart -->
             <div class="bg-gray-800 rounded-lg p-4 shadow-lg">
-                 <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-700">
+                 <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-700">
                     <h3 class="text-lg font-semibold text-white">View Statistics (Last 30 Days)</h3>
-                    <div class="text-gray-400">
-                        <button class="p-1 hover:text-white"><i class="fas fa-ellipsis-h"></i></button>
-                    </div>
-                </div>
+                    <button class="p-1 text-gray-400 hover:text-white"><i class="fas fa-ellipsis-h"></i></button>
+                 </div>
                 <div class="chart-container">
                     <canvas id="viewStatsChart"></canvas>
                 </div>
             </div>
 
-            <!-- Recent Videos (Từ VidManage, đã áp dụng Tailwind) -->
-            <div class="bg-gray-800 rounded-lg p-4 shadow-lg">
-                 <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-700">
-                     <h3 class="text-lg font-semibold text-white">Recently Added Videos</h3>
-                     <a href="#" class="text-xs text-blue-400 hover:text-blue-300">View All</a> <!-- Cập nhật link nếu cần -->
-                </div>
-                 <div class=""> <!-- Bỏ widget-content vì đã có padding ở widget -->
-                    <ul class="space-y-2">
-                        <!-- Áp dụng Tailwind cho list item -->
-                        <li class="flex items-center gap-4 py-2 border-b border-gray-700 last:border-b-0">
-                            <img src="https://placehold.co/160x90/1f2937/d1d5db?text=V1" alt="Video Thumbnail" class="w-20 h-auto rounded flex-shrink-0"> <!-- Adjusted size/colors -->
-                            <div class="overflow-hidden"> <!-- Ngăn text tràn -->
-                                <h4 class="text-sm font-medium text-white truncate">Introduction to AI Development</h4>
-                                <p class="text-xs text-gray-400">1.2K views - 2 days ago</p>
-                            </div>
-                        </li>
-                        <li class="flex items-center gap-4 py-2 border-b border-gray-700 last:border-b-0">
-                             <img src="https://placehold.co/160x90/1f2937/d1d5db?text=V2" alt="Video Thumbnail" class="w-20 h-auto rounded flex-shrink-0">
-                             <div class="overflow-hidden">
-                                 <h4 class="text-sm font-medium text-white truncate">Advanced CSS Grid Techniques</h4>
-                                 <p class="text-xs text-gray-400">5.8K views - 5 days ago</p>
-                             </div>
-                         </li>
-                         <li class="flex items-center gap-4 py-2 border-b border-gray-700 last:border-b-0">
-                             <img src="https://placehold.co/160x90/1f2937/d1d5db?text=V3" alt="Video Thumbnail" class="w-20 h-auto rounded flex-shrink-0">
-                              <div class="overflow-hidden">
-                                  <h4 class="text-sm font-medium text-white truncate">Setting Up Your Dev Environment</h4>
-                                  <p class="text-xs text-gray-400">850 views - 1 week ago</p>
-                              </div>
-                          </li>
-                           <li class="flex items-center gap-4 py-2 border-b-0 last:border-b-0"> <!-- Bỏ border cho item cuối -->
-                               <img src="https://placehold.co/160x90/1f2937/d1d5db?text=V4" alt="Video Thumbnail" class="w-20 h-auto rounded flex-shrink-0">
-                               <div class="overflow-hidden">
-                                   <h4 class="text-sm font-medium text-white truncate">Cooking Pasta Like a Pro</h4>
-                                   <p class="text-xs text-gray-400">10K views - 1 week ago</p>
-                               </div>
-                           </li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Có thể thêm các chart khác (Trend, Values, Categories) từ dashboard mới vào đây nếu muốn -->
-             <!-- Categories Panel (Ví dụ) -->
-             <div class="bg-gray-800 rounded-lg p-4 shadow-lg">
-                 <h3 class="text-lg font-semibold mb-4 text-white">Video Categories</h3>
-                 <div class="flex flex-col sm:flex-row items-center gap-4">
-                     <div class="w-full sm:w-1/2 relative flex justify-center h-36 sm:h-auto">
-                         <canvas id="categoriesChart"></canvas>
-                         <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                             <span class="text-3xl font-bold text-white">1.5K</span> <!-- Ví dụ tổng số video -->
+             <!-- Categories & Recent Videos (Side by side on md+) -->
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Categories Panel -->
+                 <div class="bg-gray-800 rounded-lg p-4 shadow-lg">
+                    <h3 class="text-lg font-semibold mb-4 text-white">Video Categories</h3>
+                     <div class="flex flex-col xl:flex-row items-center gap-4">
+                         <div class="w-full xl:w-1/2 relative flex justify-center h-36 shrink-0">
+                             <canvas id="categoriesChart"></canvas>
+                             <div id="categoriesTotal" class="absolute inset-0 flex items-center justify-center pointer-events-none text-2xl xl:text-3xl font-bold text-white"></div>
                          </div>
-                     </div>
-                     <div class="w-full sm:w-1/2 text-sm space-y-1">
-                         <!-- Dữ liệu Legend cho Categories -->
-                         <div class="flex justify-between items-center"><span class="flex items-center"><span class="inline-block w-3 h-3 rounded-full bg-blue-500 mr-2"></span>Technology</span><span class="font-medium">550</span></div>
-                         <div class="flex justify-between items-center"><span class="flex items-center"><span class="inline-block w-3 h-3 rounded-full bg-cyan-500 mr-2"></span>Gaming</span><span class="font-medium">320</span></div>
-                         <div class="flex justify-between items-center"><span class="flex items-center"><span class="inline-block w-3 h-3 rounded-full bg-teal-500 mr-2"></span>Education</span><span class="font-medium">410</span></div>
-                         <div class="flex justify-between items-center"><span class="flex items-center"><span class="inline-block w-3 h-3 rounded-full bg-indigo-500 mr-2"></span>Music</span><span class="font-medium">150</span></div>
-                         <div class="flex justify-between items-center"><span class="flex items-center"><span class="inline-block w-3 h-3 rounded-full bg-gray-600 mr-2"></span>Other</span><span class="font-medium">100</span></div>
+                         <div id="categoriesLegend" class="w-full xl:w-1/2 text-xs space-y-1"></div>
                      </div>
                  </div>
-             </div> <!-- End Categories Panel -->
+                 <!-- Recent Videos Panel -->
+                <div class="bg-gray-800 rounded-lg p-4 shadow-lg flex flex-col">
+                     <div class="flex justify-between items-center mb-3 pb-3 border-b border-gray-700">
+                         <h3 class="text-lg font-semibold text-white">Recent Videos</h3>
+                         <a href="#" class="text-xs text-blue-400 hover:text-blue-300">View All</a>
+                    </div>
+                     <ul class="space-y-3 flex-grow overflow-y-auto max-h-[220px] pr-1"> <!-- Limit height & scroll -->
+                        <li class="flex items-center gap-3"> <img src="https://placehold.co/160x90/1f2937/d1d5db?text=V1" alt="V" class="w-16 rounded flex-shrink-0"> <div class="overflow-hidden"><h4 class="text-sm font-medium text-white truncate">Intro to AI Dev</h4><p class="text-xs text-gray-400">1.2K views</p></div></li>
+                        <li class="flex items-center gap-3"> <img src="https://placehold.co/160x90/1f2937/d1d5db?text=V2" alt="V" class="w-16 rounded flex-shrink-0"> <div class="overflow-hidden"><h4 class="text-sm font-medium text-white truncate">Adv CSS Grid</h4><p class="text-xs text-gray-400">5.8K views</p></div></li>
+                        <li class="flex items-center gap-3"> <img src="https://placehold.co/160x90/1f2937/d1d5db?text=V3" alt="V" class="w-16 rounded flex-shrink-0"> <div class="overflow-hidden"><h4 class="text-sm font-medium text-white truncate">Dev Env Setup</h4><p class="text-xs text-gray-400">850 views</p></div></li>
+                        <li class="flex items-center gap-3"> <img src="https://placehold.co/160x90/1f2937/d1d5db?text=V4" alt="V" class="w-16 rounded flex-shrink-0"> <div class="overflow-hidden"><h4 class="text-sm font-medium text-white truncate">Cooking Pasta Pro</h4><p class="text-xs text-gray-400">10K views</p></div></li>
+                     </ul>
+                </div>
+            </div>
 
 
         </div> <!-- End Left Column -->
 
-        <!-- Right Column (Giữ nguyên từ dashboard mới) -->
+        <!-- Right Column -->
         <div class="lg:col-span-2 flex flex-col gap-6">
             <!-- Detection Info Panel -->
             <div class="bg-gray-800 rounded-lg p-4 shadow-lg">
                 <div class="flex justify-between items-center mb-2">
-                    <h3 class="text-lg font-semibold text-white">Detection Info</h3> <!-- Đổi tên -->
-                    <span class="text-sm text-gray-400">April 22, 2025</span>
+                    <h3 class="text-lg font-semibold text-white">Live Detection</h3>
+                    <span class="text-sm text-gray-400" id="detectionTime">...</span> <!-- Time update -->
                 </div>
                  <div class="flex justify-between items-center mb-4 text-sm border-b border-gray-700 pb-2">
-                    <div>
-                         <span class="font-semibold mr-4 text-white border-b-2 border-blue-500 pb-2">Live</span>
-                         <span class="text-gray-400 ml-4">Camera Feed 1</span>
-                    </div>
-                     <div class="flex items-center gap-2 text-gray-400">
-                         <!-- Icons/Controls -->
-                     </div>
-                </div>
-                <div class="relative mb-4 bg-black rounded overflow-hidden aspect-video">
-                    <img src="https://placehold.co/600x337/111827/9ca3af?text=Live+Feed" alt="Detection View" class="absolute inset-0 w-full h-full object-cover opacity-80">
-                    <!-- Bounding Boxes -->
-                     <div class="bounding-box" style="left: 65%; top: 60%; width: 10%; height: 30%;"></div>
-                     <div class="bounding-box" style="left: 78%; top: 58%; width: 12%; height: 35%;"></div>
-                </div>
-                <div class="flex items-center gap-3 mb-4">
-                    <!-- Playback Controls -->
-                </div>
-                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 text-sm mb-4">
-                    <!-- Details -->
+                    <div> <span class="font-semibold mr-4 text-white border-b-2 border-blue-500 pb-2">Camera Feed 1</span> <span class="text-gray-400 ml-4 text-xs">(Parking Lot North)</span></div>
+                    <div class="flex items-center gap-2 text-gray-400"> <i class="fas fa-video text-green-500" title="Recording"></i> <i class="fas fa-wifi" title="Connected"></i></div>
                  </div>
-             </div> <!-- End Detection Info Panel -->
+                <div class="relative mb-4 bg-black rounded overflow-hidden aspect-video"> <img src="https://placehold.co/600x337/111827/9ca3af?text=Live+Feed+1" alt="Detection View" class="absolute inset-0 w-full h-full object-cover"> <div class="bounding-box" style="left: 65%; top: 60%; width: 10%; height: 30%;"></div> <div class="bounding-box" style="left: 78%; top: 58%; width: 12%; height: 35%;"></div></div>
+                <div class="text-center mb-2"><button class="bg-gray-700 hover:bg-gray-600 text-gray-300 px-3 py-1 rounded-md text-xs"><i class="fas fa-expand-arrows-alt mr-1"></i> Fullscreen</button></div>
+                 <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm"> <div><span class="text-gray-400 text-xs">Location:</span> <span class="font-medium text-white">Area 2</span></div> <div><span class="text-gray-400 text-xs">Zone:</span> <span class="font-medium text-white">Z2-B</span></div> <div><span class="text-gray-400 text-xs">Object Type:</span> <span class="font-medium text-white">Vehicle</span></div> <div><span class="text-gray-400 text-xs">Confidence:</span> <span class="font-medium text-green-400">92%</span></div> </div>
+             </div>
 
-            <!-- Filters & Events Row -->
-             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div class="bg-gray-800 rounded-lg p-4 shadow-lg"> <!-- Filters --> ... </div>
-                <div class="bg-gray-800 rounded-lg p-4 shadow-lg"> <!-- Events --> ... </div>
+            <!-- Events Panel (Combined Filters/Events) -->
+             <div class="bg-gray-800 rounded-lg p-4 shadow-lg">
+                 <div class="flex justify-between items-center mb-3 pb-3 border-b border-gray-700">
+                     <h3 class="text-lg font-semibold text-white">Recent Events</h3>
+                      <select class="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none"> <option selected>All Events</option> <option>Motion</option> <option>Alerts</option> <option>Offline</option> </select>
+                 </div>
+                  <div class="space-y-3 max-h-48 overflow-y-auto pr-1 text-sm"> <!-- Limit height -->
+                     <div class="flex items-center gap-2"><i class="fas fa-car text-blue-400 fa-fw w-4 text-center"></i><span class="text-gray-400 text-xs">10:05:15</span><span class="text-white truncate flex-1">Vehicle detected [BC 1067 BX]</span><span class="text-xs text-gray-500">Cam 1</span></div>
+                     <div class="flex items-center gap-2"><i class="fas fa-walking text-yellow-400 fa-fw w-4 text-center"></i><span class="text-gray-400 text-xs">10:04:58</span><span class="text-white truncate flex-1">Motion detected - Zone C</span><span class="text-xs text-gray-500">Cam 3</span></div>
+                     <div class="flex items-center gap-2"><i class="fas fa-video-slash text-red-500 fa-fw w-4 text-center"></i><span class="text-gray-400 text-xs">10:02:11</span><span class="text-white truncate flex-1">Camera Offline</span><span class="text-xs text-gray-500">Cam 102</span></div>
+                     <div class="flex items-center gap-2"><i class="fas fa-car text-blue-400 fa-fw w-4 text-center"></i><span class="text-gray-400 text-xs">09:58:30</span><span class="text-white truncate flex-1">Vehicle entered Area 2</span><span class="text-xs text-gray-500">Cam 1</span></div>
+                     <div class="flex items-center gap-2"><i class="fas fa-exclamation-triangle text-yellow-400 fa-fw w-4 text-center"></i><span class="text-gray-400 text-xs">09:55:01</span><span class="text-white truncate flex-1">Tamper Alert</span><span class="text-xs text-gray-500">Cam 101</span></div>
+                 </div>
             </div>
 
-            <!-- OCR Result Panel -->
-            <div class="bg-gray-800 rounded-lg p-4 shadow-lg"> <!-- OCR --> ... </div>
-
-            <!-- Trend (Right) Panel -->
-             <div class="bg-gray-800 rounded-lg p-4 shadow-lg"> <!-- Trend --> ... </div>
-
-            <!-- Activity Panel -->
-             <div class="bg-gray-800 rounded-lg p-4 shadow-lg"> <!-- Activity --> ... </div>
+             <!-- Quick Stats / Mini Trends -->
+             <div class="grid grid-cols-2 gap-6">
+                 <div class="bg-gray-800 rounded-lg p-4 shadow-lg">
+                      <h4 class="text-sm font-medium text-gray-400 mb-1">Alerts Today</h4>
+                      <p class="text-2xl font-semibold text-red-500">7</p>
+                      <div class="h-16 chart-container-sm"><canvas id="alertsTrendChart"></canvas></div> <!-- Mini Chart -->
+                 </div>
+                  <div class="bg-gray-800 rounded-lg p-4 shadow-lg">
+                       <h4 class="text-sm font-medium text-gray-400 mb-1">Cameras Online</h4>
+                       <p class="text-2xl font-semibold text-green-500">23 <span class="text-sm font-normal text-gray-500">/ 24</span></p>
+                       <div class="h-16 chart-container-sm"><canvas id="onlineTrendChart"></canvas></div> <!-- Mini Chart -->
+                  </div>
+             </div>
 
         </div><!-- End Right Column -->
     </main>
 
-    <!-- Cytoscape Initialization -->
+    <!-- Script Section -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var cy = cytoscape({
-                container: document.getElementById('cy'),
-                elements: [ // Example data
-                    { data: { id: 'a', label: 'Server 1', type: 'server' }, position: { x: 100, y: 100 } },
-                    { data: { id: 'b', label: 'Switch A', type: 'switch' }, position: { x: 250, y: 150 } },
-                    { data: { id: 'c', label: 'Camera 101', type: 'camera' }, position: { x: 100, y: 250 } },
-                    { data: { id: 'd', label: 'Camera 102', type: 'camera' }, position: { x: 400, y: 100 } },
-                    { data: { id: 'e', label: 'NVR', type: 'nvr' }, position: { x: 400, y: 250 } },
-                    { data: { id: 'ab', source: 'a', target: 'b' } },
-                    { data: { id: 'cb', source: 'c', target: 'b' } },
-                    { data: { id: 'db', source: 'd', target: 'b' } },
-                    { data: { id: 'eb', source: 'e', target: 'b' } },
-                    { data: { id: 'ae', source: 'a', target: 'e' } } // Direct link example
-                ],
-                style: [
-                    { selector: 'node', style: { 'label': 'data(label)', 'text-valign': 'bottom', 'text-halign': 'center', 'font-size': '10px', 'color': '#d1d5db', 'text-margin-y': 5 } },
-                    { selector: 'node[type="server"]', style: { 'background-color': '#3b82f6', 'shape': 'rectangle' } }, // Blue - bg-blue-500
-                    { selector: 'node[type="switch"]', style: { 'background-color': '#10b981', 'shape': 'diamond' } }, // Green - bg-emerald-500
-                    { selector: 'node[type="camera"]', style: { 'background-color': '#f59e0b', 'shape': 'ellipse' } }, // Amber - bg-amber-500
-                    { selector: 'node[type="nvr"]', style: { 'background-color': '#ef4444', 'shape': 'hexagon' } }, // Red - bg-red-500
-                    { selector: 'edge', style: { 'width': 1, 'line-color': '#4b5563', 'curve-style': 'bezier' } } // gray-600
-                ],
-                layout: { name: 'preset' } // Start with preset layout
-            });
 
-             // Layout Selector Logic
-             const layoutSelector = document.getElementById('layoutSelector');
-             if (layoutSelector) {
-                 layoutSelector.addEventListener('change', function() {
-                     const layoutName = this.value;
-                     const options = {
-                         name: layoutName,
-                         animate: true, // Enable animation
-                         animationDuration: 500,
-                         padding: 30 // Add padding around the graph
-                         // Add specific layout options here if needed, e.g., for cose:
-                         // idealEdgeLength: 100, nodeRepulsion: 400000, ...
-                     };
-                     cy.layout(options).run();
-                 });
-             }
+            // --- Cytoscape ---
+            try {
+                var cy = cytoscape({
+                    container: document.getElementById('cy'),
+                    elements: [/* ... Cytoscape elements ... */],
+                    style: [/* ... Cytoscape styles ... */],
+                    layout: { name: 'preset' }
+                });
+                const layoutSelector = document.getElementById('layoutSelector');
+                if (layoutSelector) { layoutSelector.addEventListener('change', function() { cy.layout({ name: this.value, animate: true, animationDuration: 500, padding: 30 }).run(); }); }
+                } catch(e) {
+                    console.error("Cytoscape failed:", e);
+                const cyContainer = document.getElementById('cy'); // Lấy phần tử trước
+                if (cyContainer) { // Kiểm tra xem nó có tồn tại không
+                    cyContainer.innerHTML = '<p class="text-center text-red-500 p-4">Failed map.</p>'; // Gán nếu tồn tại
+                }}
 
-            // --- Chart.js Initialization (Merged) ---
+            // --- Chart.js ---
             const initChart = (canvasId, config) => {
                 const ctx = document.getElementById(canvasId);
                 if (ctx) {
-                    ctx.getContext('2d');
-                    new Chart(ctx, config);
+                    try {
+                        const chart = Chart.getChart(canvasId);
+                        if (chart) chart.destroy();
+                        new Chart(ctx, config);
+                    } catch (e) {
+                        console.error(`Chart '${canvasId}' error:`, e);
+                        ctx.parentElement.innerHTML = `<p class="text-center text-red-500 text-xs p-1">Chart Error</p>`;
+                    }
                 } else {
-                    console.error(`Canvas element with ID '${canvasId}' not found.`);
+                    console.warn(`Canvas '${canvasId}' not found.`);
                 }
             };
 
-            // --- CSS Variable Helper ---
-             const style = getComputedStyle(document.documentElement);
-             const getCssVar = (varName) => style.getPropertyValue(varName).trim() || undefined;
-             const accentColor = getCssVar('--accent-color') || '#58a6ff'; // Lấy từ root hoặc default
-             const borderColor = getCssVar('--border-color') || '#30363d';
-             const textSecondaryColor = getCssVar('--text-secondary') || '#8b949e';
-             const accentAltColor = getCssVar('--accent-alt') || '#3fb950';
-             const warningColor = getCssVar('--warning-color') || '#e3b341';
-             const purpleColor = getCssVar('--purple-accent') || '#a371f7';
-
-
-             // --- Default Chart Options (Using Tailwind friendly colors) ---
-            const defaultChartOptions = {
-                 responsive: true,
-                 maintainAspectRatio: false,
-                 plugins: {
-                     legend: { labels: { color: textSecondaryColor }, position: 'bottom' },
-                     tooltip: {
-                         enabled: true,
-                         mode: 'index',
-                         intersect: false,
-                         backgroundColor: 'rgba(17, 24, 39, 0.9)', // bg-gray-900/90
-                         titleColor: '#f9fafb', // text-gray-50
-                         bodyColor: '#d1d5db', // text-gray-300
-                         borderColor: '#374151', // border-gray-700
-                         borderWidth: 1,
-                         padding: 10,
-                         displayColors: false,
-                     }
-                 },
-                 interaction: { mode: 'nearest', axis: 'x', intersect: false }
+            const fetchChartData = async (url) => {
+                console.log(`Fetching data from: ${url}`);
+                try {
+                    const r = await fetch(url);
+                    console.log(`Fetch status for ${url}: ${r.status}`);
+                    if (!r.ok) {
+                        console.error(`HTTP error! status: ${r.status} for ${url}`);
+                        throw new Error(`HTTP ${r.status}`);
+                    }
+                    // KIỂM TRA CONTENT-TYPE TRƯỚC KHI PARSE JSON
+                    const contentType = r.headers.get("content-type");
+                    if (contentType && contentType.indexOf("application/json") !== -1) {
+                        const data = await r.json();
+                        console.log(`Data received from ${url}:`, data);
+                        return data;
+                    } else {
+                        // Xử lý trường hợp không phải JSON (ví dụ: trả về HTML lỗi 404)
+                        const textData = await r.text();
+                        console.error(`Received non-JSON response from ${url}. Content:`, textData);
+                        throw new Error(`Expected JSON, but received ${contentType}`);
+                    }
+                } catch (e) {
+                    console.error(`Fetch ${url} error:`, e);
+                    if (e instanceof SyntaxError) { console.error("JSON Parsing Error: Check the JSON file for syntax errors."); }
+                    else if (e.message.includes("NetworkError")) { console.error("Network Error: Check network connection or if the server is running."); }
+                    else if (e.message.includes("HTTP 404")) { console.error("File Not Found (404): Check the file path and name."); }
+                    return null;
+                }
             };
 
+            const twColors = { blue: { 500: '#3b82f6' }, gray: { 400: '#9ca3af', 700: '#374151', 800: '#1f2937', 900: '#111827'}, white: '#ffffff', green: {500: '#22c55e'}, red: {500: '#ef4444'}, teal: {500: '#14b8a6'}, cyan: {500: '#06b6d4'}, indigo: {500: '#6366f1'} };
 
-            // --- 1. View Stats Chart (Line - From VidManage) ---
-            const viewLabels = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7', 'Day 8', 'Day 9', 'Day 10', 'Day 11', 'Day 12', 'Day 13', 'Day 14', 'Day 15', 'Day 16', 'Day 17', 'Day 18', 'Day 19', 'Day 20', 'Day 21', 'Day 22', 'Day 23', 'Day 24', 'Day 25', 'Day 26', 'Day 27', 'Day 28', 'Day 29', 'Day 30'];
-            const viewsData = [1200, 1500, 1300, 1800, 1600, 1900, 2100, 2000, 2300, 2500, 2400, 2700, 2800, 2600, 3000, 3100, 2900, 3300, 3500, 3400, 3700, 3600, 3900, 4100, 4000, 4300, 4500, 4400, 4700, 4800];
-            initChart('viewStatsChart', {
-                type: 'line',
-                data: {
-                    labels: viewLabels,
-                    datasets: [{
-                        label: 'Views',
-                        data: viewsData,
-                        borderColor: '#3b82f6', // blue-500
-                        backgroundColor: 'rgba(59, 130, 246, 0.2)', // blue-500/20
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#3b82f6',
-                        pointRadius: 3, pointHoverRadius: 5
-                    }]
-                },
-                 options: {
-                     ...defaultChartOptions,
-                     scales: {
-                         x: { grid: { display: false }, ticks: { color: '#9ca3af', maxRotation: 0, autoSkip: true, maxTicksLimit: 10 } }, // gray-400
-                         y: { beginAtZero: true, grid: { color: '#374151' }, ticks: { color: '#9ca3af' } } // gray-700, gray-400
-                     },
-                      plugins: { ...defaultChartOptions.plugins, legend: { display: false } }
-                 }
-            });
+            const defaultChartOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: twColors.gray[400], boxWidth: 10, font: { size: 10 } }, position: 'bottom' }, tooltip: { enabled: true, mode: 'index', intersect: false, backgroundColor: 'rgba(17, 24, 39, 0.9)', titleColor: twColors.white, bodyColor: twColors.gray[300] || '#d1d5db', borderColor: twColors.gray[700], borderWidth: 1, padding: 8, displayColors: true, boxWidth: 8, boxPadding: 4, titleFont: { weight: '600', size: 12 }, bodyFont: { size: 11 } } }, interaction: { mode: 'index', axis: 'x', intersect: false }};
+            const minimalistOptions = { ...defaultChartOptions, scales: { x: { display: false }, y: { display: false } }, plugins: { ...defaultChartOptions.plugins, legend: { display: false }, tooltip: { enabled: false } } };
 
-            // --- 2. Categories Chart (Doughnut - From VidManage adaptation) ---
-            const categoryLabels = ['Technology', 'Gaming', 'Education', 'Music', 'Other'];
-            const categoryData = [550, 320, 410, 150, 100]; // Example absolute numbers
-            initChart('categoriesChart', {
-                type: 'doughnut',
-                data: {
-                    labels: categoryLabels,
-                    datasets: [{
-                        label: 'Videos',
-                        data: categoryData,
-                        backgroundColor: ['#3b82f6', '#14b8a6', '#059669', '#8b5cf6', '#6b7280'], // blue-500, cyan-500, teal-600, indigo-500, gray-500
-                        borderColor: '#1f2937', // bg-gray-800
-                        borderWidth: 2, hoverOffset: 4
-                    }]
-                },
-                options: {
-                    ...defaultChartOptions,
-                    cutout: '70%',
-                    plugins: {
-                         ...defaultChartOptions.plugins,
-                         tooltip: { // Keep tooltip customization if needed
-                              ...defaultChartOptions.plugins.tooltip,
-                              callbacks: {
-                                   label: function(context) {
-                                       let label = context.label || '';
-                                       if (label) { label += ': '; }
-                                       if (context.parsed !== null) {
-                                            label += context.parsed.toLocaleString(); // Format number
-                                       }
-                                       return label;
-                                  }
-                              }
-                         }
-                     }
-                }
-            });
+            async function loadAndRenderCharts() {
+                console.log("Starting to load chart data...");
+                const [viewStatsData, categoriesData, alertsData, onlineData] = await Promise.all([
+                    fetchChartData('data/view-stats.json'),
+                    fetchChartData('data/categories.json'),
+                    fetchChartData('data/alerts-trend.json'),
+                    fetchChartData('data/online-trend.json')
+                ]);
+                console.log("Data fetching finished.");
 
-            // --- 3. Trend Chart (Line - Minimalist from new dashboard) ---
-            const trendLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-            const trendData = [12, 19, 3, 5, 2, 3, 9];
-            initChart('trendChart', {
-                type: 'line',
-                data: { labels: trendLabels, datasets: [{ data: trendData, borderColor: '#f97316', // orange-500
-                    tension: 0.4, pointRadius: 0 }] },
-                options: {
-                    ...defaultChartOptions,
-                    scales: { x: { display: false }, y: { display: false } }, // Hide axes
-                    plugins: { ...defaultChartOptions.plugins, legend: { display: false }, tooltip: { enabled: false } } // Hide legend and tooltip
-                }
-            });
+                 // 1. View Stats Chart
+                if (viewStatsData && viewStatsData.labels && viewStatsData.datasets) {
+                    console.log("Initializing viewStatsChart...");
+                    initChart('viewStatsChart', { type: 'line', data: { labels: viewStatsData.labels, datasets: viewStatsData.datasets.map(ds => ({ ...ds, borderColor: twColors.blue[500], backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.4, pointRadius: 0, pointHoverRadius: 4 })) }, options: { ...defaultChartOptions, scales: { x: { grid: { display: false }, ticks: { color: twColors.gray[400], maxRotation: 0, autoSkip: true, maxTicksLimit: 10, font: { size: 10 } } }, y: { beginAtZero: true, grid: { color: twColors.gray[700] }, ticks: { color: twColors.gray[400], font: { size: 10 } } } }, plugins: { ...defaultChartOptions.plugins, legend: { display: false } } } });
+                } else { console.warn("View Stats data is missing or invalid."); }
 
-            // --- 4. Values Chart (Bar - Minimalist from new dashboard) ---
-            const valuesLabels = ['A', 'B', 'C', 'D', 'E', 'F'];
-            const valuesData = [65, 59, 80, 81, 56, 55];
-             initChart('valuesChart', {
-                 type: 'bar',
-                 data: { labels: valuesLabels, datasets: [{ data: valuesData, backgroundColor: '#6b7280', // gray-500
-                     borderRadius: 2 }] },
-                 options: {
-                     ...defaultChartOptions,
-                     scales: { x: { display: false }, y: { display: false } },
-                     plugins: { ...defaultChartOptions.plugins, legend: { display: false }, tooltip: { enabled: false } }
-                 }
-             });
+                 // 2. Categories Chart
+                if (categoriesData && categoriesData.labels && categoriesData.datasets && categoriesData.datasets.length > 0) {
+                   console.log("Initializing categoriesChart...");
+                    const categoryDataset = categoriesData.datasets[0];
+                    if (categoryDataset && categoryDataset.data) {
+                        const totalVideos = categoryDataset.data.reduce((sum, val) => sum + (Number(val) || 0), 0);
+                        const totalElement = document.getElementById('categoriesTotal');
+                        if (totalElement) totalElement.textContent = totalVideos.toLocaleString() || 'N/A';
+                        const legendContainer = document.getElementById('categoriesLegend');
+                        if(legendContainer){ legendContainer.innerHTML = ''; categoriesData.labels.forEach((label, index) => { const value = categoryDataset.data[index]; const color = (categoryDataset.backgroundColor && categoryDataset.backgroundColor[index]) || twColors.gray[500]; legendContainer.innerHTML += `<div class="flex justify-between items-center"><span class="flex items-center"><span class="inline-block w-2.5 h-2.5 rounded-full mr-2" style="background-color: ${color};"></span>${label}</span><span class="font-medium">${Number(value).toLocaleString() || '0'}</span></div>`; }); }
+                        initChart('categoriesChart', { type: 'doughnut', data: { labels: categoriesData.labels, datasets: [{ ...categoryDataset, borderColor: twColors.gray[800], borderWidth: 3, hoverOffset: 8 }] }, options: { ...defaultChartOptions, cutout: '70%', plugins: { ...defaultChartOptions.plugins, tooltip: { ...defaultChartOptions.plugins.tooltip, callbacks: { label: (c) => `${c.label || ''}: ${Number(c.parsed).toLocaleString() || '0'}` } } } } });
+                    } else { console.warn("Categories dataset or data is missing/invalid."); }
+                } else { console.warn("Categories data is missing or invalid."); }
+
+                // 3. Alerts Trend Mini Chart
+                if (alertsData && alertsData.labels && alertsData.datasets) {
+                    console.log("Initializing alertsTrendChart...");
+                    initChart('alertsTrendChart', { type: 'line', data: { labels: alertsData.labels, datasets: alertsData.datasets.map(ds => ({ ...ds, borderColor: twColors.red[500], fill: false, tension: 0.4, pointRadius: 0 })) }, options: minimalistOptions });
+                } else { console.warn("Alerts Trend data is missing or invalid."); }
+
+                // 4. Online Cameras Trend Mini Chart
+                if (onlineData && onlineData.labels && onlineData.datasets) {
+                    console.log("Initializing onlineTrendChart...");
+                    initChart('onlineTrendChart', { type: 'line', data: { labels: onlineData.labels, datasets: onlineData.datasets.map(ds => ({ ...ds, borderColor: twColors.green[500], fill: false, tension: 0.4, pointRadius: 0 })) }, options: minimalistOptions });
+                } else { console.warn("Online Trend data is missing or invalid."); }
+
+                console.log("Chart loading and rendering attempt complete.");
+            }
+            loadAndRenderCharts().catch(e => console.error("Unhandled error in loadAndRenderCharts:", e));
+
+            // Update detection time
+            const detectionTimeEl = document.getElementById('detectionTime');
+            if(detectionTimeEl) { setInterval(() => { detectionTimeEl.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit'}); }, 1000); }
+
+            // Mobile Menu Toggle Logic
+            const mobileMenuButton = document.querySelector('.md\\:hidden button[aria-controls="mobile-menu"]');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenuButton && mobileMenu) { mobileMenuButton.addEventListener('click', () => { const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true'; mobileMenuButton.setAttribute('aria-expanded', !isExpanded); mobileMenu.classList.toggle('hidden'); mobileMenuButton.querySelectorAll('svg').forEach(icon => icon.classList.toggle('hidden')); }); }
 
         });
     </script>
+
 </body>
 </html>

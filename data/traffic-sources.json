@@ -1,0 +1,16 @@
+{
+    "labels": ["External", "Search", "Direct", "Social", "Other"],
+    "datasets": [
+      {
+        "label": "Traffic Source",
+        "data": [45, 25, 15, 10, 5],
+        "backgroundColor": [
+          "#3b82f6",
+          "#22c55e",
+          "#eab308",
+          "#a855f7",
+          "#6b7280"
+        ]
+      }
+    ]
+  }
